@@ -1,0 +1,155 @@
+﻿<Page x:Class="ZabgcTool_SDK_.View.Pages.AdminPanel"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ZabgcTool_SDK_.View"
+      mc:Ignorable="d" 
+      d:DesignHeight="720" d:DesignWidth="1250"
+      Title="AdminPanel">
+    <Page.Resources>
+        <ControlTemplate x:Key="SlideMenu" TargetType="Button">
+            <Grid Name="btn" Height="45">
+                <Border>
+                    <StackPanel Orientation="Horizontal">
+    <Image Source="{DynamicResource ResourceKey=Img}"
+                               VerticalAlignment="Center" HorizontalAlignment="Left" Height="30" 
+                               Width="30" Stretch="Fill" Margin="20 0 0 0"/>
+                        <Label Content="{TemplateBinding Content}" FontSize="14" Background="Transparent" Margin="10 0 0 0" VerticalAlignment="Center">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=btn}" Value="True">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsPressed, ElementName=btn}" Value="true">
+                                            <Setter Property="Foreground" Value="#FF9D9999"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                            <Setter Property="Foreground" Value="white"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                    </StackPanel>
+                </Border>
+                <Border Name="MouseOverBorder" Background="#FF8D8D8D">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Opacity" Value="0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName= btn}" Value="true">
+                                    <Setter Property="Opacity" Value="0.1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+                <Border Name="FocusedBorder" Background="#FF8D8D8D">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Opacity" Value="0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                    <Setter Property="Opacity" Value="0.1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+                <Border Name="FocusedBorder1" Background="Transparent">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="BorderThickness" Value="3 0 0 0"/>
+                            <Setter Property="BorderBrush" Value="#FF00AEFF"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+    </Page.Resources>
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0"  Name="SlideMenu" HorizontalAlignment="Left" Width="220">
+            <Border BorderThickness="1 0 1 1" BorderBrush="#FF303031"/>
+            <Border BorderThickness="0" Background="Black" Opacity="0.5" />
+            <StackPanel>
+                <Button Name="Home"  Template="{StaticResource ResourceKey=SlideMenu}"
+                    Content="Главная">
+                    <Button.Resources>
+                        <ImageSource x:Key="Img">
+                            Icons/Home.png
+                        </ImageSource>
+                    </Button.Resources>
+                </Button>
+                <Button Name="Gallery" Template="{StaticResource ResourceKey=SlideMenu}"
+                    Content="Фотогалерея">
+                    <Button.Resources>
+                        <ImageSource x:Key="Img">
+                            Icons/Gallery.png
+                        </ImageSource>
+                    </Button.Resources>
+                </Button>
+                <Button Name="Departments" Template="{StaticResource ResourceKey=SlideMenu}"
+                    Content="Отделения">
+                    <Button.Resources>
+                        <ImageSource x:Key="Img">
+                            Icons/Departments.png
+                        </ImageSource>
+                    </Button.Resources>
+                </Button>
+                <Button Name="Schedule" Template="{StaticResource ResourceKey=SlideMenu}"
+                    Content="Расписание">
+                    <Button.Resources>
+                        <ImageSource x:Key="Img">
+                            Icons/Schedule.png
+                        </ImageSource>
+                    </Button.Resources>
+                </Button>
+                <Button Name="Magazin" Template="{StaticResource ResourceKey=SlideMenu}"
+                    Content="Газета">
+                    <Button.Resources>
+                        <ImageSource x:Key="Img">
+                            Icons/Magazin.png
+                        </ImageSource>
+                    </Button.Resources>
+                </Button>
+                <Button Name="Pages" Template="{StaticResource ResourceKey=SlideMenu}"
+                    Content="Страницы">
+                    <Button.Resources>
+                        <ImageSource x:Key="Img">
+                            Icons/Page.png
+                        </ImageSource>
+                    </Button.Resources>
+                </Button>
+                <Button Name="News" Template="{StaticResource ResourceKey=SlideMenu}"
+                    Content="Новости">
+                    <Button.Resources>
+                        <ImageSource x:Key="Img">
+                            Icons/News.png
+                        </ImageSource>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Frame Name="WorkSpace" NavigationUIVisibility="Hidden" Grid.Column="1"/>
+    </Grid>
+</Page>

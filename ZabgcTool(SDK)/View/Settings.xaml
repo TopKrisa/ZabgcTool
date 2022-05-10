@@ -1,0 +1,543 @@
+﻿<Window x:Class="ZabgcTool_SDK_.View.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZabgcTool_SDK_.View"
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Настройки" Height="600" Width="800" WindowStartupLocation="CenterScreen" Background="#FF1D222C" WindowStyle="None" ResizeMode="NoResize">
+    <Window.Resources>
+        <Style x:Key="TBs" TargetType="TextBox">
+
+            <Setter Property="Background" Value="#FF11141A"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#FF2D333D"/>
+            <Setter Property="Padding" Value="10 0 0 0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid x:Name="root" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" SnapsToDevicePixels="True">
+                            <Border x:Name="Back" BorderThickness="1" CornerRadius="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"/>
+                            <ScrollViewer x:Name="PART_ContentHost" BorderThickness="0" Padding="{TemplateBinding Padding}" IsTabStop="False" Background="{x:Null}" TextElement.Foreground="{TemplateBinding Foreground}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF383C44"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF1D578C"/>
+                                <Setter Property="Background" Value="#FF0E1116"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="TextBox"  TargetType="{x:Type TextBox}">
+            <Grid>
+                <TextBox x:Name="tb" Grid.Row="2" Style="{StaticResource TBs}" Text="{TemplateBinding Text}"  VerticalAlignment="Top"/>
+                <TextBlock IsHitTestVisible="False" FontSize="14"  Text="Введите значение" Grid.Row="2" VerticalAlignment="Center" Margin="10 0 0 0 " Foreground="#FF535559">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=tb}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
+                    <Setter Property="Foreground" Value="#FF838383"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="TexBoxDecripription" TargetType="{x:Type Label}">
+            <Grid>
+                <Label Content="{TemplateBinding Content}" Background="Transparent" FontSize="{TemplateBinding FontSize}" VerticalAlignment="Center">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Foreground" Value="#FF9D9999"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=btn}" Value="True">
+                                    <Setter Property="Foreground" Value="White"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsPressed, ElementName=btn}" Value="true">
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                    <Setter Property="Foreground" Value="white"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="TextBoxWithButton" TargetType="{x:Type TextBox}">
+            <Grid>
+                <TextBox x:Name="tb" Grid.Row="2" Style="{StaticResource TBs}" Text="{TemplateBinding Text}"  VerticalAlignment="Top"/>
+                <TextBlock IsHitTestVisible="False" FontSize="14"  Text="Введите значение" Grid.Row="2" VerticalAlignment="Center" Margin="10 0 0 0 " Foreground="#FF535559">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=tb}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <Button Click="butn_Click_1" Name="butn" Template="{DynamicResource ButtonBaseControlTemplate1}"
+                          Width="25" Margin="0 0 0 0" Height="35" HorizontalAlignment="Right"  VerticalAlignment="Top" >
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Content" Value="{materialDesign:PackIcon Kind=DotsHorizontal, Size=15}"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#FF9D9999"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsMouseOver,ElementName=butn}" Value="true">
+                                    <Setter Property="Foreground" Value="White"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+            
+        </ControlTemplate>
+        <Style x:Key="PBs" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#FF11141A"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#FF2D333D"/>
+            <Setter Property="Padding" Value="10 0 0 0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Grid x:Name="root" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" SnapsToDevicePixels="True">
+                            <Border x:Name="Back" BorderThickness="1" CornerRadius="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"/>
+                            <ScrollViewer x:Name="PART_ContentHost" BorderThickness="0" Padding="{TemplateBinding Padding}" IsTabStop="False" Background="{x:Null}" TextElement.Foreground="{TemplateBinding Foreground}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF383C44"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF1D578C"/>
+                                <Setter Property="Background" Value="#FF0E1116"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="TopMenuButtons" TargetType="Button">
+            <Grid Name="btn" Height="40" Margin="20 0 0 0" >
+                <Border>
+                    <Grid>
+                        <Label Content="{TemplateBinding Content}" Background="Transparent" FontSize="{TemplateBinding FontSize}" VerticalAlignment="Center">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=btn}" Value="True">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsPressed, ElementName=btn}" Value="true">
+                                            <Setter Property="Foreground" Value="#FF9D9999"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                            <Setter Property="Foreground" Value="white"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                    </Grid>
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsPressed}" Value="true">
+                                    <Setter Property="Margin" Value="0 2 0 0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+                <Label Name="xax" Content="{TemplateBinding Content}" Margin="-3 0 0 0"
+                           Background="Transparent" VerticalAlignment="Center" 
+                           FontSize="23" FontWeight="Bold">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                    <DataTrigger.Setters>
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <BlurEffect Radius="25"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger.Setters>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="Buttons" TargetType="Button">
+            <Grid Name="btn" Height="40" Margin="20 0 0 0" >
+                <Border>
+                    <Grid>
+                        <Label Content="{TemplateBinding Content}" Background="Transparent" FontSize="{TemplateBinding FontSize}" VerticalAlignment="Center">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=btn}" Value="True">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsPressed, ElementName=btn}" Value="true">
+                                            <Setter Property="Foreground" Value="#FF9D9999"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                            <Setter Property="Foreground" Value="white"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                    </Grid>
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsPressed}" Value="true">
+                                    <Setter Property="Margin" Value="0 2 0 0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+    </Window.Resources>
+    <Border BorderThickness="1" BorderBrush="#13161D" >
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.RowSpan="2" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="#13161D">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="1" ShadowDepth="1"  Color="#FF9D9999" RenderingBias="Quality"/>
+                </Border.Effect>
+            </Border>
+            <Border Grid.Row="0" BorderBrush="#FF303031"  BorderThickness="0 0 0 1" Grid.ColumnSpan="2">
+                <Grid MouseDown="Grid_MouseDown" Background="Transparent"  >
+                    <Polygon
+            Grid.ColumnSpan="2"
+                        Stroke="Transparent"
+            Fill="White" Opacity="0.2"
+            Points="
+            300,0
+            500,0
+            480,20
+            320,20
+            "/>
+                    <Label Content="НАСТРОЙКИ" FontWeight="Bold" HorizontalAlignment="Center" Padding="0" Foreground="#FF9D9999" VerticalAlignment="Top" Margin="0 0 0 5"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Name="butns" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="butns_Click" Width="35" >
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Margin" Value="30 5 0 0"/>
+                                    <Setter Property="Content" Value="{materialDesign:PackIcon WindowMinimize, Size=15}"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=butns}" Value="true">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Name="butn" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="butn_Click" Width="25" Margin="0" Height="38" VerticalAlignment="Top" >
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Content" Value="{materialDesign:PackIcon Close, Size=20}"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=butn}" Value="true">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <StackPanel Grid.ColumnSpan="2"  Grid.Row="1" Width="400" HorizontalAlignment="Left" Margin="0 20 0 0">
+                <Label Content="FTP адрес:" Margin="20 0 0 0" Template="{StaticResource TexBoxDecripription}"/>
+                <TextBox Name="FTPaddres" Style="{StaticResource TBs}" Width="200" HorizontalAlignment="Left"  Margin="20 0 0 0"/>             
+                <Label Content="FTP логин:" Margin="20 0 0 0" Template="{StaticResource TexBoxDecripription}"/>
+                <TextBox Name="FTPname" Style="{StaticResource TBs}" Width="200" HorizontalAlignment="Left"  Margin="20 0 0 0"/>     
+                <Label Content="FTP пароль:" Margin="20 0 0 0" Template="{StaticResource TexBoxDecripription}"/>
+                <PasswordBox Style="{StaticResource PBs}" Name="FTPpassword" Width="200" HorizontalAlignment="Left"  Margin="20 0 0 0"/> 
+                
+                <Label Content="Имя администратора:" Margin="20 0 0 0" Template="{StaticResource TexBoxDecripription}"/>
+                <TextBox Name="AdminName" Style="{StaticResource TBs}" Width="200" HorizontalAlignment="Left"  Margin="20 0 0 0"/>
+                <Label Content="Путь для Расписания 2.0:" Margin="20 0 0 0" Template="{StaticResource TexBoxDecripription}"/>
+                <TextBox Name="ShedulePath" Template="{StaticResource TextBoxWithButton}"  Width="200" HorizontalAlignment="Left" Margin="20 0 0 0"/>
+                <ToggleButton Name="TGB" Grid.Row="2" Height="30" Width="145" HorizontalAlignment="Left" VerticalAlignment="Top"
+                      Foreground="#FFACB3BF"
+                      FontSize="14"
+                      Margin="25 10 0 0" Content="Оставаться в сети">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border  Height="20" Width="20" CornerRadius="2" BorderThickness="1" Background="Black" HorizontalAlignment="Left">
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                </Trigger>
+                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" Duration="0:0:0.100" To="#FF333842"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                Duration="0:0:0.100" To="#FF51555C"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Image Margin="4">
+                                        <Image.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="True">
+                                                        <Setter Property="Image.Source" Value="Icons\pngwing.png"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Border>
+                                <ContentPresenter Margin="10 0 0 0" Content="{TemplateBinding Content}"
+                                          VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+                <ToggleButton Name="Autrn" Grid.Row="2" Height="30" Width="230" HorizontalAlignment="Left" VerticalAlignment="Top"
+                      Foreground="#FFACB3BF"
+                      FontSize="14"
+                      Margin="25 10 0 0" Content="Запускать со стартом Windows">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border  Height="20" Width="20" CornerRadius="2" BorderThickness="1" Background="Black" HorizontalAlignment="Left">
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="BorderBrush" Value="#FF333842"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#FF51555C"/>
+                                                </Trigger>
+                                                <EventTrigger RoutedEvent="PreviewMouseDown">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" Duration="0:0:0.100" To="#FF333842"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                                <EventTrigger RoutedEvent="PreviewMouseUp">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color"
+                                                                Duration="0:0:0.100" To="#FF51555C"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Image Margin="4">
+                                        <Image.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type ToggleButton}}}" Value="True">
+                                                        <Setter Property="Image.Source" Value="Icons\pngwing.png"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Border>
+                                <ContentPresenter Margin="10 0 0 0" Content="{TemplateBinding Content}"
+                                          VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+                <Label Content="API адрес:" Margin="20 20 0 0" Template="{StaticResource TexBoxDecripription}"/>
+                <TextBox Name="API" Style="{StaticResource TBs}" Width="200" HorizontalAlignment="Left"  Margin="20 0 0 0"/>
+                <Button Name="DeleteFiles" Template="{StaticResource ResourceKey=Buttons}" FontSize="18" Content="Очистка кэша" Height="44"/>
+            </StackPanel>
+            <Button Grid.ColumnSpan="2" Name="Save" Grid.Row="1" Width="170" Height="50" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Margin="15"
+                    Content=" Сохранить настройки "
+                    FontSize="16" Foreground="White" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="OverridesDefaultStyle" Value="True"/>
+                        <Setter Property="Background" Value="#FF0E86CA"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Name="border"  BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#FF00AEFF"/>
+                                        </Trigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseDown">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <!--<ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                Duration="0:0:0.100" To=" 2 2 0 0 "/>-->
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#FF095386" Duration="0:0:0.0002"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseUp">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <!--<ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                Duration="0:0:0.100" To="0"/>-->
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#FF0E86CA" Duration="0:0:0.0002"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                    </Style>
+                </Button.Style>
+    
+            </Button>
+            
+            <Border Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Margin="0 0 0 0" VerticalAlignment="Bottom" >
+                <Button Name="Exit" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="18" Content="Выйти из аккаунта" Height="44"/>
+            </Border>
+            <Image Source="logga.png" MouseLeftButtonDown="Image_MouseLeftButtonDown" Stretch="Uniform" Width="100" Height="100" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Margin="20" HorizontalAlignment="Right">
+                <Image.Style>
+                    <Style TargetType="Image">
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard >
+                                        <Storyboard>
+                                            <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="20 25 25 20" />
+                                            <DoubleAnimation Duration="0:0:0.10"  Storyboard.TargetProperty="Width"
+                                                             To="110"/>
+                                            <DoubleAnimation Duration="0:0:0.10"  Storyboard.TargetProperty="Height"
+                                                             To="110"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard >
+                                        <Storyboard>
+                                            <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="20"/>
+                                            <DoubleAnimation Duration="0:0:0.10"  Storyboard.TargetProperty="Width"
+                                                             To="100"/>
+                                            <DoubleAnimation Duration="0:0:0.10"  Storyboard.TargetProperty="Height"
+                                                             To="100"/>
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Grid>
+    </Border>
+</Window>

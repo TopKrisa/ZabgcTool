@@ -1,0 +1,357 @@
+﻿<Window x:Class="ZabgcTool_SDK_.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZabgcTool_SDK_.View"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Zabgc Tools" Height="800" Width="1250" WindowStartupLocation="CenterScreen" Background="#FF1D222C" WindowStyle="None" ResizeMode="NoResize">
+    <Window.Resources>
+        <Style x:Key="LvItemStyle" TargetType="ListViewItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Border x:Name="border" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="TopMenuButtons" TargetType="Button">
+            <Grid Name="btn" Height="40" Margin="20 0 0 0" >
+                <Border>
+                    <Grid>
+                        <Label Content="{TemplateBinding Content}" Background="Transparent" FontSize="{TemplateBinding FontSize}" VerticalAlignment="Center">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=btn}" Value="True">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsPressed, ElementName=btn}" Value="true">
+                                            <Setter Property="Foreground" Value="#FF9D9999"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                            <Setter Property="Foreground" Value="white"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                    </Grid>
+                    
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsPressed}" Value="true">
+                                    <Setter Property="Margin" Value="0 2 0 0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+                <Label Name="xax" Content="{TemplateBinding Content}" Margin="-3 0 0 0"
+                           Background="Transparent" VerticalAlignment="Center" 
+                           FontSize="23" FontWeight="Bold">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                    <DataTrigger.Setters>
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <BlurEffect Radius="25"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger.Setters>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="MenuButtons" TargetType="Button">
+            <Grid Name="btn" Height="40" Margin="0 0 0 0" >
+                <Border>
+                    <Grid>
+                        <Label Content="{TemplateBinding Content}" Background="Transparent" FontSize="{TemplateBinding FontSize}" VerticalAlignment="Center">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=btn}" Value="True">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsPressed, ElementName=btn}" Value="true">
+                                            <Setter Property="Foreground" Value="#FF9D9999"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsFocused}" Value="true">
+                                            <Setter Property="Foreground" Value="white"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                    </Grid>
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type Button}},
+                                            Path = IsPressed}" Value="true">
+                                    <Setter Property="Margin" Value="0 2 0 0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+        <!-- buttonstyle -->
+        <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
+                    <Setter Property="Foreground" Value="#FF838383"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <tb:TaskbarIcon Name="MainTray" Visibility="Collapsed" IconSource="Logo.ico" PopupActivation="LeftOrRightClick">
+            <tb:TaskbarIcon.TrayToolTip>
+                <Border Background="#FF1D222C" BorderBrush="#FF303031" BorderThickness="1" CornerRadius="5">
+                    <Label FontSize="10" Foreground="#FF9D9999">ZABGC Tools</Label>
+                </Border>
+            </tb:TaskbarIcon.TrayToolTip>
+            <!--<tb:TaskbarIcon.TrayPopup>
+                <Popup>
+                    <Border Name="TrayPopup" Background="#FF1D222C" BorderBrush="#FF303031" BorderThickness="1" CornerRadius="5" >
+                        <StackPanel Margin="0">
+                            <Button Name="TrayMain" Template="{StaticResource ResourceKey=MenuButtons}" FontSize="12" Content="Открыть"/>
+                            <Button Name="TraySettings" Template="{StaticResource ResourceKey=MenuButtons}" FontSize="12" Content="Настройки"/>
+                            <Button Name="TrayClose" Template="{StaticResource ResourceKey=MenuButtons}" FontSize="12" Content="Закрыть"/>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+            </tb:TaskbarIcon.TrayPopup>-->
+        </tb:TaskbarIcon>
+        <Grid Name="TopMenu" Grid.Row="0"  Grid.ColumnSpan="2" Background="Transparent" Width="1250">
+            <Border BorderThickness="1" BorderBrush="#FF303031" Background="Transparent">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" MouseEnter="StackPanel_MouseEnter" Background="Transparent" MouseDown="StackPanel_MouseDown" >
+                        <Button Name="Control" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="Панель управления"/>
+                       
+                        <Button Name="FTP" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="FTP"/>
+                        <Button Name="Authomatic" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="OSS/RDP"/>
+                        <Button Name="Discous" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="Обсуждения"/>
+                    </StackPanel>
+                   
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 0 0 40">
+                        <Button Name="Settings" Template="{DynamicResource ButtonBaseControlTemplate1}"  Width="35" >
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Margin" Value="0 5 0 0"/>
+                                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=Settings, Size=15}"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Settings}" Value="true">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                      
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Grid Background="Transparent" Width="35">
+                            <Button Name="Notify" Template="{DynamicResource ButtonBaseControlTemplate1}"  Width="35" >
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="0 5 0 0"/>
+                                        <Setter Property="Content" Value="{materialDesign:PackIcon Kind=Bell, Size=15}"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="#FF9D9999"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMouseOver,ElementName=Notify}" Value="true">
+                                                <Setter Property="Foreground" Value="White"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Ellipse Visibility="Collapsed" MouseDown="IssetNotify_MouseDown" Width="10" Height="10" Name="IssetNotify" Margin="10 0 0 5" Fill="#FF0E86CA">
+                               
+                            </Ellipse>
+                            <TextBlock Visibility="Collapsed"   Name="NotifyCount" Margin="21 12 0 0" FontSize="7" Foreground="White"/>
+                        </Grid>
+                     
+                        
+                        
+                        <Button Name="butns" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="butns_Click" Width="35" >
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Margin" Value="30 5 0 0"/>
+                                    <Setter Property="Content" Value="{materialDesign:PackIcon WindowMinimize, Size=15}"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=butns}" Value="true">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Name="butn" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="butn_Click" Width="25" Margin="0" Height="38" VerticalAlignment="Top" >
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Content" Value="{materialDesign:PackIcon Close, Size=20}"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=butn}" Value="true">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                    <TextBlock Name="NameOfPage" Visibility="Collapsed"  Foreground="#FF9D9999" Margin="0 0 10 15" VerticalAlignment="Bottom" FontSize="18" HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+           
+        </Grid>
+
+        <Grid Panel.ZIndex="999"
+              Visibility="Collapsed"
+              Name="NotifyPopup"
+              Grid.RowSpan="2" 
+              VerticalAlignment="Top"
+              Margin="0 35 36 0"
+              HorizontalAlignment="Right" 
+              Height="300"
+              Width="400"
+              Grid.ColumnSpan="2" 
+              Background="#FF272e3b">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Polygon Grid.Row="1"
+                StrokeThickness="1"
+                Stroke="#FF303031"
+                Fill="#FF272e3b"
+                Points="
+                0,0
+                0,280
+                400, 280
+                400, 0
+                " />
+            <Polygon Grid.Row="0"
+                StrokeThickness="1"
+                Stroke="Black"
+                Fill="White"
+                     Opacity="0.1"
+                Points="
+                0,0
+                0,20
+                400, 20
+                400, 0
+                " />
+            <TextBlock 
+                Grid.Row="0" 
+                Text="Уведомления" 
+                FontSize="18"
+                HorizontalAlignment="Center"
+                Margin="0 -3 0 0"
+                Padding="0"
+                Foreground="#FF9D9999"
+                />
+
+            <ListView  Grid.Row="1" Padding="0" Background="Transparent"
+                      ItemsSource="{Binding}" 
+                      Name="NotifyList" 
+                       Mouse.MouseLeave="NotifyList_MouseLeave"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                      ItemContainerStyle="{StaticResource LvItemStyle}"
+                     BorderThickness="0">
+                <ListView.ItemTemplate >
+                    <DataTemplate>
+                        <Grid>
+                            <Border Padding="0" BorderBrush="#FF303031" BorderThickness="0 0 0 1" Width="400" Margin="0 2  0 0" Height="35">
+                                <Border.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <Trigger Property="Border.IsMouseOver" Value="True">
+                                                <Setter Property="Border.Background" Value="#3D434F" />
+                                              
+                                                
+                                            </Trigger>
+                                           
+
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <StackPanel Panel.ZIndex="999" Margin="0 4 0 0 " Orientation="Vertical"  VerticalAlignment="Top" Loaded="StackPanel_Loaded" MouseLeftButtonDown="StackPanel_MouseLeftButtonDown" Height="35">
+                                        <TextBlock Background="Transparent" Foreground="White" Margin="5 0 0 0" FontSize="14" Text="{Binding NotifyText}"/>
+                                        <TextBlock Background="Transparent" FontSize="9" Foreground="White" Margin="3 0 0 0" Text="{Binding NotifyDate}"/>
+                                    </StackPanel>
+                                </Grid>
+                              </Border>
+                         
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+        </Grid>
+       
+        <Frame Name="MainWindowFrame" NavigationUIVisibility="Hidden" Grid.ColumnSpan="2" Grid.Row="1"/>
+
+    </Grid>
+</Window>

@@ -1,0 +1,230 @@
+﻿<Page x:Class="ZabgcTool_SDK_.View.Pages.Home"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+           xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
+      xmlns:local="clr-namespace:ZabgcTool_SDK_.View" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d" 
+      d:DesignHeight="620" d:DesignWidth="1030"
+      Title="Home">
+    <Page.Resources>
+        <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" TargetName="border" Value="#FFF4F4F4"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FFADB2B5"/>
+                    <Setter Property="Foreground" Value="#FF838383"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="Label" TargetType="Label">
+            <Label Content="{TemplateBinding Content}" >
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="Margin" Value="20 10 20 5"/>
+                    </Style>
+                </Label.Style>
+            </Label>
+        </ControlTemplate>
+    </Page.Resources>
+    <Grid Background="Transparent">
+        <Border VerticalAlignment="Top" HorizontalAlignment="Left" Background="#6e6e6e" Margin="100 20 20 20 "  Height="300" Width="400" BorderThickness="2" CornerRadius="8" BorderBrush="#0F1116" >
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard >
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="100 30 20 20"  />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard >
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="100 20 20 20"/>
+
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            
+            <Grid >
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top"  Margin="0 0 0 0">
+
+                    <TextBlock Text="ZABGC " FontSize="23" VerticalAlignment="Bottom"  Foreground="#6DB2C0">
+                        <TextBlock.Effect>
+                            <BlurEffect Radius="1">
+                                
+                            </BlurEffect>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock Text=" DataBase Control" FontSize="23" VerticalAlignment="Bottom"  Foreground="#A2CECD">
+                        <TextBlock.Effect>
+                            <BlurEffect Radius="1">
+
+                            </BlurEffect>
+                        </TextBlock.Effect>
+                    </TextBlock>
+
+                </StackPanel>
+                <StackPanel Width="335" HorizontalAlignment="Left" Margin="0 30 0 0" >
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Вы зашли как:" />
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Всего материалов на главной:"/>
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Всего страниц на сайте:"/>
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Зарегистрировано пользователей:"/>
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Фотографий в фотогалереи:"/>
+                </StackPanel>
+                <StackPanel Width="100" HorizontalAlignment="Right" Margin="10 30 0 0">
+                    <Label Template="{StaticResource ResourceKey=Label}" Name="Login" >
+                    ...
+                    </Label>
+                  
+                    <Label Template="{StaticResource ResourceKey=Label}" Name="Materials">
+                        ...
+                    </Label>
+                    <Label Template="{StaticResource ResourceKey=Label}" Name="Pages">
+                        ...
+                    </Label>
+                    <Label Template="{StaticResource ResourceKey=Label}" Name="Users">
+                        ...
+                    </Label>
+                    <Label Template="{StaticResource ResourceKey=Label}" Name="Photo">
+                        ...
+                    </Label>
+                </StackPanel>
+
+                <Image  Visibility="Visible" Name="LoadingAnim1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" Width="50" Height="50"  gif:AnimationBehavior.SourceUri="Apiloading.gif"/>
+            </Grid>
+        </Border>
+        <Border VerticalAlignment="Top" HorizontalAlignment="Right" Background="#6e6e6e" Margin="20 20 100 20"  Height="300" Width="400" BorderThickness="2" CornerRadius="8" BorderBrush="#0F1116" >
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard >
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="20 30 100 20"  />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            
+                            <EventTrigger.Actions>
+                                
+                                <BeginStoryboard >
+                                    <Storyboard>
+                                        <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="20 20 100 20"/>
+                                                
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            
+            <Grid>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top"  Margin="0 0 0 0">
+                   
+                    <TextBlock Text="Я" FontSize="23" VerticalAlignment="Bottom"  Foreground="Red"/>
+                    <TextBlock Text="ндекс.Метрика" VerticalAlignment="Bottom"  Foreground="WhiteSmoke" FontSize="23"/>
+                </StackPanel>
+                <StackPanel Margin="0 40 0 0" Width="250" HorizontalAlignment="Left">
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Отказы:" />
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Время на сайте:" />
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Глубина просмотра:" />
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="Посетителей:" />
+                </StackPanel>
+                <StackPanel Margin="0 40 0 0" HorizontalAlignment="Right">
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="Denided"/>
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="TimeOnSite" />
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="PageDepth"/>
+                    <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="Clients"/>
+                </StackPanel>
+                <Image  Visibility="Visible" Name="LoadingAnim2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" Width="50" Height="50"  gif:AnimationBehavior.SourceUri="Apiloading.gif"/>
+            </Grid>
+        </Border>
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Name="ScheduleUpload" Template="{StaticResource ButtonBaseControlTemplate1}" HorizontalAlignment="Center"  Click="ScheduleUpload_Click" VerticalAlignment="Center" Margin="20"   >
+                <Button.ToolTip>
+                    <ToolTip  Background="#FF9D9999" BorderBrush="#0F1116" Foreground="Black"  >
+                        
+                            Добавить Расписание 2.0
+                        
+                    </ToolTip>
+                </Button.ToolTip>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content" Value="{materialDesign:PackIcon Kind=ProgressUpload, Size=50}" />
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#FF9D9999"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMouseOver,ElementName=ScheduleUpload}" Value="true">
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard >
+                                        <Storyboard>
+                                            <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="25 25 15 15" />
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard >
+                                        <Storyboard>
+                                            <ThicknessAnimation Duration="0:0:0.10" 
+                                                            Storyboard.TargetProperty="Margin"
+                                                            To="20"/>
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+          
+        </Grid>
+   
+    </Grid>
+       
+</Page>
