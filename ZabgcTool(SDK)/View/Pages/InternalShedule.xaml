@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ZabgcTool_SDK_.View.Pages" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="InternalShedule">
@@ -202,7 +203,7 @@
         </Border>
         <Border Grid.Row="1" Name="AcceptBorder"  BorderBrush="#384244" BorderThickness="1" CornerRadius="4"  Panel.ZIndex="999" Visibility="Collapsed"  Background="#FF1D222C" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid Width="300" Height="100">
-                <TextBox VerticalAlignment="Top" Margin="10 20 10 0" FontSize="18" Name="NameSchedule" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
+                <TextBox VerticalAlignment="Top" Margin="10 20 10 0" FontSize="18" Name="NameSchedule" Foreground="White" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
                 <Border Name="Accept" Grid.Row="2" VerticalAlignment="Bottom" Height="35" BorderThickness="1" Margin="10" Background="#FF00AEFF">
                     <Border.Style>
                         <Style TargetType="{x:Type Border}">
@@ -335,10 +336,11 @@
                 <Label Content="Нет доступных устроиств" HorizontalAlignment="Center" 
                    VerticalAlignment="Bottom" Foreground="#FF9D9999" FontSize="20" Margin="0 0 0 200" />
             </Grid>
-            <ListView Name="Schedule" ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Background="Transparent"  BorderBrush="Transparent" ItemContainerStyle="{StaticResource LvItemStyle}" BorderThickness="0">
+            <Grid>
+                <ListView Name="Schedule" ScrollViewer.CanContentScroll="False" ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Background="Transparent"  BorderBrush="Transparent" ItemContainerStyle="{StaticResource LvItemStyle}" BorderThickness="0">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="20 4 20 0" >
+                        <StackPanel Margin="10 4 10 0" >
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
                                     <Style.Triggers 
@@ -361,7 +363,7 @@
                                                     <Storyboard>
                                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="20 4 20 0"/>
+                                                            To="10 4 10 0"/>
 
                                                     </Storyboard>
                                                 </BeginStoryboard>
@@ -371,8 +373,10 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <Border CornerRadius="2" Background="Transparent" Name="Bord"  BorderThickness="1" BorderBrush="#FF303031" Height="50" VerticalAlignment="Top">
-
+                            <Border CornerRadius="4" Background="Transparent" Name="Bord"  BorderThickness="1" BorderBrush="#FF303031" Height="50" VerticalAlignment="Top">
+                                <Border.Effect>
+                                    <DropShadowEffect x:Name="Shadow1" BlurRadius="20" Opacity="0.4" Color="Black" ShadowDepth="0"/>
+                                </Border.Effect>
                                 <Grid>
                                     <Grid.Style>
                                         <Style TargetType="Grid">
@@ -398,6 +402,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

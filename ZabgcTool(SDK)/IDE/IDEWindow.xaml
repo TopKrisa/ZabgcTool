@@ -111,7 +111,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button  Name="Undo"  Template="{DynamicResource ButtonBaseControlTemplate1}"  Width="25" Margin="0" >
+                <Button  Name="Undo" Visibility="Collapsed" Template="{DynamicResource ButtonBaseControlTemplate1}"  Width="25" Margin="0" >
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Content" Value="{materialDesign:PackIcon  Kind=Undo, Size=20}"/>
@@ -126,7 +126,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button  Name="Redo"  Template="{DynamicResource ButtonBaseControlTemplate1}"  Width="25" Margin="0" >
+                <Button  Name="Redo"  Visibility="Collapsed" Template="{DynamicResource ButtonBaseControlTemplate1}"  Width="25" Margin="0" >
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Content" Value="{materialDesign:PackIcon  Kind=Redo, Size=20}"/>

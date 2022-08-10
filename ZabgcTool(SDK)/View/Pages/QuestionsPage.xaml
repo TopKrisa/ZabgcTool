@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ZabgcTool_SDK_.View.Pages" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="QuestionsPage">
@@ -70,11 +71,11 @@
             <RowDefinition/>
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        
+        <Image Name="LoadAnim" Grid.Row="0" Visibility="Visible"  Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center"  gif:AnimationBehavior.SourceUri="Load.gif"/>
         <ListView Grid.Row="0" Name="QuestionList" ItemsSource="{Binding}" Background="Transparent"  BorderThickness="0" ItemContainerStyle="{StaticResource LvItemStyle}" >
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="20 4 20 0">
+                    <StackPanel Margin="10 4 10 0" >
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Style.Triggers 
@@ -97,7 +98,7 @@
                                                 <Storyboard>
                                                     <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="20 4 20 0"/>
+                                                            To="10 4 10 0"/>
 
                                                 </Storyboard>
                                             </BeginStoryboard>
@@ -106,7 +107,8 @@
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <Border  BorderThickness="1" BorderBrush="#FF303031" Height="60">
+                        <Border  BorderThickness="1" CornerRadius="4" BorderBrush="#FF303031" Height="60">
+                       
                             <Border.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -125,7 +127,7 @@
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
 
                                     <Label  Content="{Binding User}" Foreground="White" FontSize="16" FontWeight="Bold" Width="100"  VerticalAlignment="Center"/>
-                                    <Label Content="{Binding Question}" FontSize="14" Foreground="White" VerticalAlignment="Center" Width="790"/>
+                                    <Label Content="{Binding QuestionPreview}" FontSize="14" Foreground="White" VerticalAlignment="Center" Width="790"/>
 
                                 </StackPanel>
                                 <Label Content="{Binding Date}" FontSize="9" Foreground="Gray" HorizontalAlignment="Right"/>
@@ -139,7 +141,7 @@
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <Border  Height="10" Width="10" CornerRadius="2" BorderThickness="1" Background="Black" HorizontalAlignment="Left">
+                                                    <Border  Height="13" Width="13" CornerRadius="2" BorderThickness="1" Background="Black" HorizontalAlignment="Left">
                                                         <Border.Style>
                                                             <Style TargetType="{x:Type Border}">
                                                                 <Setter Property="BorderBrush" Value="#FF333842"/>
@@ -165,7 +167,7 @@
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Border.Style>
-                                                        <Image Width="9" Height="9">
+                                                        <Image Width="11" Height="11">
                                                             <Image.Style>
                                                                 <Style>
                                                                     <Style.Triggers>
@@ -192,7 +194,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Border Panel.ZIndex="9699" Background="#0F1116" Grid.Row="1" BorderThickness="0 1 0 1" BorderBrush="#FF303031" >
+        <Border Panel.ZIndex="9699" Background="#0F1116" CornerRadius="0 0 10 10" Grid.Row="1" BorderThickness="0 1 0 1" BorderBrush="#FF303031" >
 
 
             <Button  Content="Удалить выбранные" Template="{StaticResource TopMenuButtons}"  Visibility="Collapsed" Width="200" HorizontalAlignment="Left" Name="DeleteCoupleQuestions" Click="DeleteCoupleQuestions_Click">

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ZabgcTool_SDK_.View"
          xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Настройки" Height="600" Width="800" WindowStartupLocation="CenterScreen" Background="#FF1D222C" WindowStyle="None" ResizeMode="NoResize">
+        Title="Настройки" Height="600" Width="800" WindowStartupLocation="CenterScreen" Background="Transparent" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize">
     <Window.Resources>
         <Style x:Key="TBs" TargetType="TextBox">
 
@@ -266,7 +266,8 @@
             </Grid>
         </ControlTemplate>
     </Window.Resources>
-    <Border BorderThickness="1" BorderBrush="#13161D" >
+    <Border CornerRadius="10" Background="#FF1D222C" BorderBrush="#2B3241" BorderThickness="1">
+        
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
@@ -276,10 +277,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Border Grid.RowSpan="2" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="#13161D">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="1" ShadowDepth="1"  Color="#FF9D9999" RenderingBias="Quality"/>
-                </Border.Effect>
+            <Border Grid.RowSpan="2" Grid.ColumnSpan="2">
             </Border>
             <Border Grid.Row="0" BorderBrush="#FF303031"  BorderThickness="0 0 0 1" Grid.ColumnSpan="2">
                 <Grid MouseDown="Grid_MouseDown" Background="Transparent"  >
@@ -499,7 +497,7 @@
             <Border Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Margin="0 0 0 0" VerticalAlignment="Bottom" >
                 <Button Name="Exit" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="18" Content="Выйти из аккаунта" Height="44"/>
             </Border>
-            <Image Source="logga.png" MouseLeftButtonDown="Image_MouseLeftButtonDown" Stretch="Uniform" Width="100" Height="100" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Margin="20" HorizontalAlignment="Right">
+            <Image Source="logga.png"  MouseLeftButtonDown="Image_MouseLeftButtonDown" Stretch="Uniform" Width="100" Height="100" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Margin="20" HorizontalAlignment="Right">
                 <Image.Style>
                     <Style TargetType="Image">
                         <Style.Triggers>

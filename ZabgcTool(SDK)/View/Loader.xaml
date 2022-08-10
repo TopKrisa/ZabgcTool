@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZabgcTool_SDK_.View" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Загрузка" Height="300" Width="300" WindowStartupLocation="CenterScreen" Background="#FF1D222C" WindowStyle="None" ResizeMode="NoResize">
+        Title="Загрузка" Height="300" Width="300" WindowStartupLocation="CenterScreen" Background="Transparent" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize">
     <Window.Resources>
         <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type ButtonBase}">
             <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
@@ -28,6 +28,8 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
     </Window.Resources>
+    <Border Cursor="AppStarting" Background="#FF1D222C" CornerRadius="10">
+        
     <Grid>
         <Image Name="LoadAnim" Visibility="Collapsed" Margin="15" Width="250" Height="250"  gif:AnimationBehavior.SourceUri="Load.gif"/>
         <Grid Grid.Row="1" Visibility="Collapsed" Name="NotConnectedPopUp"  Background="Transparent"
@@ -71,4 +73,5 @@
             </Button>
         </Grid>
     </Grid>
+    </Border>
 </Window>

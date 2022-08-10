@@ -26,6 +26,14 @@ namespace ZabgcTool_SDK_.Model
             }
             set { question = value; }
         }
+        public string QuestionPreview
+        {
+            get
+            {
+                return question.Length >= 100 ? WebUtility.HtmlDecode(question.Substring(0, 100).Insert(100, "...")) : WebUtility.HtmlDecode(question);
+            }
+            
+        }
         [JsonProperty("id")]
         public int Id
         {

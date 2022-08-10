@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using ZabgcTool_SDK_.APIKeys.Core;
 using ZabgcTool_SDK_.FTP;
+using ZabgcTool_SDK_.Model;
 using ZabgcTool_SDK_.View.Pages;
 
 namespace ZabgcTool_SDK_.View
@@ -21,12 +22,30 @@ namespace ZabgcTool_SDK_.View
         APIRequest<Notify> API = new APIRequest<Notify>(APIKeys.Core.DataTableNames.Tables.Notify, APIKeys.Keys.Api.Admin);
         List<Notify> Notifies = new List<Notify>();
         private int Count = 0;
-        public MainWindow()
+        private bool _notifyOpened = false;
+        public MainWindow(int Type)
         {
 
             InitializeComponent();
+           
+            switch (Type)
+            {
+                case (int)Authorization.UserTypes.Admin:
+
+                    break;
+                case (int)Authorization.UserTypes.ScheduleAdmin:
+                    FTP.Visibility = Visibility.Collapsed;
+                    Authomatic.Visibility = Visibility.Collapsed;
+                    Discous.Visibility = Visibility.Collapsed;
+                    Notify.Visibility = Visibility.Collapsed;
+                   
+                    break;
+                default:
+                    break;
+            }
             //  LoadNotify();
-            MainWindowFrame.Navigate(new AdminPanel(NameOfPage, this));
+            #region EventHandlers
+            MainWindowFrame.Navigate(new AdminPanel(NameOfPage, this,Type));
             Control.Focus();
             Authomatic.Click += (s, e) =>
              {
@@ -76,7 +95,7 @@ namespace ZabgcTool_SDK_.View
              };
             FTP.Click += (s, e) =>
             {
-                NameOfPage.Visibility = Visibility.Collapsed;
+                NameOfPage.Text = "FTP";
                 MainWindowFrame.Navigate(new MainFTP(this));
             };
             FocusableChanged += (s, e) =>
@@ -87,27 +106,14 @@ namespace ZabgcTool_SDK_.View
             {
                 NameOfPage.Visibility = Visibility.Collapsed;
                 NotifyPopup.Visibility = Visibility.Collapsed;
-                MainWindowFrame.Navigate(new AdminPanel(NameOfPage, this));
+                MainWindowFrame.Navigate(new AdminPanel(NameOfPage, this, Type));
             };
-            Notify.Click += async (s, e) =>
-            {
-
-
-                NotifyPopup.Visibility = Visibility.Visible;
-                Notifies = await API.GetData();
-                NotifyList.ItemsSource = Notifies.OrderBy(x => x.IsSeen == 0).Reverse();
-                await API.DeleteData(0);
-                await API.EditData(null, 0);
-                IssetNotify.Visibility = Visibility.Hidden;
-                NotifyCount.Visibility = Visibility.Hidden;
-                await API.DeleteData(0);
-
-            };
-
+            Notify.Click += async (s, e) => NotifyClick(_notifyOpened);
+           
 
             Loaded += (s, e) =>
           {
-              //   LoadNotify();
+               LoadNotify();
           };
 
             Timer timer = new Timer();
@@ -138,19 +144,39 @@ namespace ZabgcTool_SDK_.View
                }
 
            };
+            #endregion
         }
-
-        private async void LoadNotify()
+        private async void NotifyClick(bool opened)
         {
+
+            (NotifyPopup.Visibility, _notifyOpened) = !opened ? (Visibility.Visible, true) : (Visibility.Collapsed, false);
             Notifies = await API.GetData();
             NotifyList.ItemsSource = Notifies.OrderBy(x => x.IsSeen == 0).Reverse();
-            NotifyCount.Text = Notifies.Count(x => x.IsSeen == 0).ToString();
-            Count = Convert.ToInt32(NotifyCount.Text);
-            if (Count == 0)
+            await API.DeleteData(0);
+            await API.EditData(null, 0);
+            IssetNotify.Visibility = Visibility.Hidden;
+            NotifyCount.Visibility = Visibility.Hidden;
+            await API.DeleteData(0);
+        }
+        private async void LoadNotify()
+        {
+            try
             {
-                IssetNotify.Visibility = Visibility.Hidden;
-                NotifyCount.Visibility = Visibility.Hidden;
+                Notifies = await API.GetData();
+                NotifyList.ItemsSource = Notifies.OrderBy(x => x.IsSeen == 0).Reverse();
+                NotifyCount.Text = Notifies.Count(x => x.IsSeen == 0).ToString();
+                Count = Convert.ToInt32(NotifyCount.Text);
+                if (Count == 0)
+                {
+                    IssetNotify.Visibility = Visibility.Hidden;
+                    NotifyCount.Visibility = Visibility.Hidden;
+                }
             }
+            catch
+            {
+
+            }
+       
 
         }
         private void butns_Click(object sender, RoutedEventArgs e)
@@ -220,7 +246,8 @@ namespace ZabgcTool_SDK_.View
 
         private void NotifyList_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            //NotifyPopup.Visibility = Visibility.Collapsed;
+            NotifyPopup.Visibility = Visibility.Collapsed;
+            _notifyOpened = false;
         }
     }
 

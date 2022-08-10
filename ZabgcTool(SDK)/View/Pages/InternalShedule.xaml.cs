@@ -63,11 +63,27 @@ namespace ZabgcTool_SDK_.View.Pages
 
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
-            var settings = new Helper.Settings().ReadSettings();
-            var Internal = (Model.Data.InternalSchedule)(sender as System.Windows.Controls.Button).DataContext;
-            await new FTP.Client(settings.Addres, settings.Login, settings.Password).DeleteFile(Internal.Url);
-            await new APIKeys.Core.APIRequest<Model.Data.InternalSchedule>(APIKeys.Core.DataTableNames.Tables.Internal, APIKeys.Keys.Api.Admin).DeleteData(Internal.Id);
-            LoadData(Schedule);
+            try
+            {
+
+                Model.Data.InternalSchedule Internal = (Model.Data.InternalSchedule)(sender as Button).DataContext;
+              
+                        var settings = new Helper.Settings().ReadSettings();
+
+                        await new APIKeys.Core.APIRequest<Model.Data.InternalSchedule>(APIKeys.Core.DataTableNames.Tables.Internal, APIKeys.Keys.Api.Admin).DeleteData(Internal.Id);
+                        await new FTP.Client(settings.Addres, settings.Login, settings.Password).DeleteFile(Internal.Url);
+      
+
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                LoadData(Schedule);
+            }
+         
         }
 
         private async void SaveSchedule_Click(object sender, RoutedEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ZabgcTool_SDK_.RemoteDesktop
@@ -8,13 +9,15 @@ namespace ZabgcTool_SDK_.RemoteDesktop
         private string _Server;
         private string _UserName;
         private string _Password;
-        public RDPCore(string Server, string UserName, string Password, string Pc)
+        public RDPCore(string Server, string UserName, string Password, string Pc, string Dns)
         {
-            _Server = Server;
+            _Server = $"{Pc}.{Dns}";
             _UserName = UserName;
             _Password = Password;
             InitializeComponent();
-            NamePc.Text = $"{Pc}({Server})";
+            RDPClient.OnDisconnected += (s, e) => Close();
+            
+            NamePc.Text = $" {Pc}.{Dns} ({Server})";
         }
         public RDPCore()
         {
@@ -26,6 +29,7 @@ namespace ZabgcTool_SDK_.RemoteDesktop
         {
             // ClientRPD.DesktopWidth = Width - 30;
             // ClientRPD.DesktopHeight = this.Height - 40;
+            
         }
 
         private void RDPCore_Load(object sender, EventArgs e)
@@ -34,10 +38,11 @@ namespace ZabgcTool_SDK_.RemoteDesktop
             RDPClient.UserName = _UserName;
             RDPClient.AdvancedSettings2.ClearTextPassword = _Password;
             RDPClient.AdvancedSettings7.EnableCredSspSupport = true;
-
+            Size resolution = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Size;
+            
             RDPClient.ColorDepth = 32;
-            RDPClient.DesktopWidth = 1900;
-            RDPClient.DesktopHeight = 1040;
+            RDPClient.DesktopWidth = resolution.Width-10;
+            RDPClient.DesktopHeight = resolution.Height-45;
             RDPClient.Connect();
         }
         protected override void OnClosed(EventArgs e)

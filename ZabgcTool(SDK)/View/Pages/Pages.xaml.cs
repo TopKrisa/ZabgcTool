@@ -26,26 +26,33 @@ namespace ZabgcTool_SDK_.View.Pages
         {
             InitializeComponent();
             Refresh();
+            
         }
         private List<Model.Data.Pages> pages;
         private async void Refresh()
         {
-            await Task.Run(() => {
-                Dispatcher.Invoke(async () => {
+            try
+            {
+                Search.IsEnabled = false;
+                await Task.Run(async () => {
                     pages = await new APIKeys.Core.APIRequest<Model.Data.Pages>(APIKeys.Core.DataTableNames.Tables.Pages, APIKeys.Keys.Api.Admin).GetData();
-                    if (pages.Count == 0)
-                    {
-                        NoPageData.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        lv.DataContext = pages.OrderBy(x => x.Id).Reverse();
-                        NoPageData.Visibility = Visibility.Collapsed;
-                    }
-                    
                 });
-            });
-    
+                if (pages.Count == 0)
+                {
+                    NoPageData.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    lv.DataContext = pages.OrderBy(x => x.Id).Reverse();
+                    NoPageData.Visibility = Visibility.Collapsed;
+                }
+            }
+            finally
+            {
+                LoadAnim.Visibility = Visibility.Collapsed;
+                Search.IsEnabled = true;
+            }
+            
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -56,14 +63,21 @@ namespace ZabgcTool_SDK_.View.Pages
 
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
+            if (!Helper.Helper.IsWindowOpen<DeleteDialog>())
+            {
+                new DeleteDialog(async () => {
+                    
             Model.Data.Pages pages = (Model.Data.Pages)(sender as Button).DataContext;
             await new APIKeys.Core.APIRequest<Pages>(APIKeys.Core.DataTableNames.Tables.Pages, APIKeys.Keys.Api.Admin).DeleteData(pages.Id);
             Refresh();
+
+                }).Show();
+            }
         }
         
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            lv.DataContext = pages.Where(x =>x.Name.ToLower().Contains(Search.Text.ToLower()));
+            lv.DataContext = pages.Where(x =>x.Name.ToLower().Contains(Search.Text.ToLower())|| x.Id.ToString() == Search.Text);
         
         }
         private Model.Data.Pages Page;
@@ -72,7 +86,7 @@ namespace ZabgcTool_SDK_.View.Pages
             Page = (Model.Data.Pages)(sender as Button).DataContext;
             string text = Page.Text;
             NameOfData.Text = Page.Name;
-            var Editor = new HtmlRedactor.EditRedactor(text);
+            var Editor = new HtmlRedactor.EditRedactor(text, () => { });
             Editor.Show();
             Editor.Closing += async (s, es) =>
             {

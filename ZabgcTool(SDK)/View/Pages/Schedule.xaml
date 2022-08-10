@@ -33,17 +33,10 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button Name="Distant" Template="{StaticResource ButtonBaseControlTemplate1}"  Margin="0"  >
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=SchoolOutline, Size=150}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="#FF9D9999"/>
+        <Grid>
+            <Grid.Style>
+                <Style TargetType="Grid">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Distant}" Value="true">
-                            <Setter Property="Foreground" Value="White"/>
-                        </DataTrigger>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <EventTrigger.Actions>
                                 <BeginStoryboard >
@@ -69,6 +62,21 @@
                         </EventTrigger>
                     </Style.Triggers>
                 </Style>
+            </Grid.Style>
+            <Button Name="Distant" Template="{StaticResource ButtonBaseControlTemplate1}"  Margin="0"  >
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=SchoolOutline, Size=150}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Distant}" Value="true">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        
+                    </Style.Triggers>
+                </Style>
             </Button.Style>
         </Button>
         <TextBlock Text="Заочное" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 160 0 0">
@@ -85,17 +93,11 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-        <Button Name="Internal" Template="{StaticResource ButtonBaseControlTemplate1}" Grid.Column="1"  Margin="0"   >
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=College, Size=150}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="#FF9D9999"/>
+        </Grid>
+        <Grid Grid.Column="1" Width="200" Height="220">
+            <Grid.Style>
+                <Style TargetType="Grid">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Internal}" Value="true">
-                            <Setter Property="Foreground" Value="White"/>
-                        </DataTrigger>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <EventTrigger.Actions>
                                 <BeginStoryboard >
@@ -122,6 +124,21 @@
                         </EventTrigger>
                     </Style.Triggers>
                 </Style>
+            </Grid.Style>
+        <Button Name="Internal" Template="{StaticResource ButtonBaseControlTemplate1}" Grid.Column="1"  Margin="0"   >
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=College, Size=150}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Internal}" Value="true">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        
+                    </Style.Triggers>
+                </Style>
             </Button.Style>
         </Button>
 
@@ -139,5 +156,6 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+        </Grid>
     </Grid>
 </Page>

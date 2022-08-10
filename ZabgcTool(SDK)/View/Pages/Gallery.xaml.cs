@@ -29,7 +29,7 @@ namespace ZabgcTool_SDK_.View.Pages
             {
 
                 List<Model.Data.Gallery> gallery = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
-              GalleryList.DataContext = gallery;
+                GalleryList.DataContext = gallery;
             };
             CreateNewAlbum.Click += (s, e) =>
             {
@@ -38,22 +38,32 @@ namespace ZabgcTool_SDK_.View.Pages
             };
             AccBtn.Click += async (s, e) =>
             {
-                System.Windows.Forms.MessageBox.Show(NameOfData.Text);
-                if (!string.IsNullOrWhiteSpace(NameOfData.Text))
+                List<Model.Data.Gallery> list = new List<Model.Data.Gallery>();
+                List<Model.Data.Photo> Photos = new List<Model.Data.Photo>();
+                int id = 0;
+                try
                 {
-                    await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).AddData(new Model.Data.Gallery()
+                    if (!string.IsNullOrWhiteSpace(NameOfData.Text))
                     {
-                        Name = NameOfData.Text,
-                        Count = "123",
-                        Category = "123",
-                        Photos = new List<Model.Data.Photo>(),
-                        Id=0
-                    });
-                    var list = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
-                    int id = list.Max(x => x.Id);
-                    List<Model.Data.Photo> Photos = list.FirstOrDefault(x => x.Id == id).Photos;
+                        await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).AddData(new Model.Data.Gallery()
+                        {
+                            Name = NameOfData.Text,
+                            Count = "123",
+                            Category = "123",
+                            Photos = new List<Model.Data.Photo>(),
+                            Id = 0
+                        });
+                        list = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
+                         id = list.Max(x => x.Id);
+                       Photos    = list.FirstOrDefault(x => x.Id == id).Photos;
+                    }
+                }
+                finally
+                {
+               
                     Frame.Navigate(new GalleryPhotos(Photos, NameOfData.Text, Frame, id));
                 }
+                
 
             };
         }
@@ -77,11 +87,17 @@ namespace ZabgcTool_SDK_.View.Pages
             AcceptBorder.Visibility = Visibility.Collapsed;
         }
 
-        private async void DeleteGallery_Click(object sender, RoutedEventArgs e)
+        private  void DeleteGallery_Click(object sender, RoutedEventArgs e)
         {
-            var gallery = (Model.Data.Gallery)(sender as Button).DataContext;
-            await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).DeleteData(gallery.Id);
-            GalleryList.DataContext = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
+            if (!Helper.Helper.IsWindowOpen<DeleteDialog>())
+            {
+                new DeleteDialog(async () => {
+                    var gallery = (Model.Data.Gallery)(sender as Button).DataContext;
+                    await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).DeleteData(gallery.Id);
+                    GalleryList.DataContext = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
+                }).Show();
+            }
+           
         }
     }
 }

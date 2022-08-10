@@ -31,10 +31,18 @@ namespace ZabgcTool_SDK_.Model.Data
         {
             get
             {
-                return !original.Contains("http://zabgc.ru") ? $"http://zabgc.ru{original}" : original;
+                return original;  
             }
             set { original = value; }
         }
+
+        public string OriginalImage
+        {
+            get {
+                var image = original;
+                return !image.Contains("http://zabgc.ru") ? $"http://zabgc.ru{image}" : image; }
+        }
+
         [JsonProperty("datet")]
         public string Date
         {
@@ -59,7 +67,7 @@ namespace ZabgcTool_SDK_.Model.Data
             {
                 var bi = new BitmapImage();
                 bi.BeginInit();
-                bi.UriSource = new Uri(Original);
+                bi.UriSource = new Uri(OriginalImage);
                 bi.EndInit();
                 return bi;
             }

@@ -131,15 +131,16 @@
                     </Border.Style>
 
 
-                    <Button Content=" Создать новый альбом " FontSize="16" Foreground="White"  Name="CreateNewAlbum" >
+                    <Button Content=" Создать новый альбом "  FontSize="16" Foreground="White"  Name="CreateNewAlbum" >
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="OverridesDefaultStyle" Value="True"/>
                                 <Setter Property="Background" Value="#FF0E86CA"/>
+                                
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
-                                            <Border Name="border"  BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                                            <Border Name="border"   BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
@@ -184,7 +185,7 @@
                 <Grid Width="300" Height="100">
 
                     <TextBlock Text="Название"  Foreground="#FF9D9999" Margin="10 0 0 0"/>
-                    <TextBox VerticalAlignment="Top" Margin="10 20 10 0" FontSize="18" Name="NameOfData" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
+                    <TextBox VerticalAlignment="Top" Foreground="White" Margin="10 20 10 0" FontSize="18" Name="NameOfData" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
                    <Border Name="Accept" Grid.Row="2" VerticalAlignment="Bottom" Height="35" BorderThickness="1" Margin="10" Background="#FF00AEFF">
                         <Border.Style>
                             <Style TargetType="{x:Type Border}">
@@ -271,10 +272,12 @@
                     </Button>
                 </Grid>
             </Border>
-            <ListView Grid.Row="0" Name="GalleryList" ItemsSource="{Binding}" Background="Transparent"  BorderThickness="0" ItemContainerStyle="{StaticResource LvItemStyle}" >
+            <Grid Grid.Row="0">
+                
+            <ListView  Name="GalleryList" ItemsSource="{Binding}" Background="Transparent"  BorderThickness="0" ItemContainerStyle="{StaticResource LvItemStyle}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="20 4 20 0">
+                        <StackPanel Margin="10 4 10 0">
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
                                     <Style.Triggers 
@@ -297,7 +300,7 @@
                                                     <Storyboard>
                                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="20 4 20 0"/>
+                                                            To="10 4 10 0"/>
 
                                                     </Storyboard>
                                                 </BeginStoryboard>
@@ -341,6 +344,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

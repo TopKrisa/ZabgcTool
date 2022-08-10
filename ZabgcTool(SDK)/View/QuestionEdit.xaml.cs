@@ -43,13 +43,19 @@ namespace ZabgcTool_SDK_.View
 
         private async void RenameButton_Click(object sender, RoutedEventArgs e)
         {
-
-            await new APIKeys.Core.APIRequest<Qusestions>(APIKeys.Core.DataTableNames.Tables.Questions, APIKeys.Keys.Api.Admin).EditData(
-                new Qusestions() {Question = Quest,User= User,Activity= 1,Answer= Answer.Text,  Date= "", AnswerDate = "0",Id= ID, adminname = new Helper.Settings().AdminName}, ID
-                );
-            ListView.DataContext = await new APIKeys.Core.APIRequest<Qusestions>(APIKeys.Core.DataTableNames.Tables.Questions, APIKeys.Keys.Api.Admin).GetData();
-            await Task.Delay(150);
-            this.Close();
+            if (string.IsNullOrEmpty(Answer.Text))
+            {
+                Answer.BorderBrush = Brushes.Red;
+            }
+            else
+            {
+                await new APIKeys.Core.APIRequest<Qusestions>(APIKeys.Core.DataTableNames.Tables.Questions, APIKeys.Keys.Api.Admin).EditData(
+              new Qusestions() { Question = Quest, User = User, Activity = 1, Answer = Answer.Text, Date = "", AnswerDate = "0", Id = ID, adminname = new Helper.Settings().AdminName }, ID
+              );
+                ListView.DataContext = await new APIKeys.Core.APIRequest<Qusestions>(APIKeys.Core.DataTableNames.Tables.Questions, APIKeys.Keys.Api.Admin).GetData();
+                await Task.Delay(150);
+                this.Close();
+            }
         }
     }
 }

@@ -21,10 +21,7 @@ namespace ZabgcTool_SDK_.HtmlRedactor
         public EditRedactor()
         {
             InitializeComponent();
-            NameData.Click += (s, e) =>
-            {
-                Textbox.Visibility = Visibility.Visible;
-            };
+            
             Edit.Click += async (s, e) =>
             {
             
@@ -34,26 +31,81 @@ namespace ZabgcTool_SDK_.HtmlRedactor
             };
             SaveName.Click += (s, e) => { Textbox.Visibility = Visibility.Collapsed; };
         }
-        public EditRedactor(string text)
+        public EditRedactor(string text, Action Save)
         {
 
+            MouseLeftButtonDown += (s, e) => { DragMove(); };
             Text = text;
             InitializeComponent();
 
             WpfHtmlEditor.Content.InsertHtml(ParseHtml(Text), false);
-            NameData.Click += (s, e) =>
-            {
-                Textbox.Visibility = Visibility.Visible;
-            };
+            //NameData.Click += (s, e) =>
+            //{
+            //    Textbox.Visibility = Visibility.Visible;
+            //};
+            
             Edit.Click += async (s, e) =>
             {
-                Saver.Text = await SiteSaver(WpfHtmlEditor.Content.GetBodyHtml(true));
+                Saver.Text = SaveParseHtml(await SiteSaver(WpfHtmlEditor.Content.GetBodyHtml(true)));
+                Save();
+                await Task.Delay(3000);
+                Close();
+
+            };
+            SaveName.Click += (s, e) => { Textbox.Visibility = Visibility.Collapsed; };
+        }
+        public EditRedactor(string text, int a)
+        {
+             
+            Text = text;
+            InitializeComponent();
+
+            WpfHtmlEditor.Content.InsertHtml(ParseHtml(Text), false);
+            //NameData.Click += (s, e) =>
+            //{
+            //    Textbox.Visibility = Visibility.Visible;
+            //};
+            Edit.Click += async (s, e) =>
+            {
+                Saver.Text = SaveParseHtml(await SiteSaver(WpfHtmlEditor.Content.GetBodyHtml(true)));
+                
                 Close(); 
                 
             };
             SaveName.Click += (s, e) => { Textbox.Visibility = Visibility.Collapsed; };
         }
 
+        private string SaveParseHtml(string Html) {
+            string html = Html;
+            List<string> imgScrs = new List<string>();
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(Html);//or doc.Load(htmlFileStream)
+            var nodes = doc.DocumentNode.SelectNodes(@"//img[@src]");
+            if (nodes != null)
+            {
+                foreach (var img in nodes)
+                {
+                    HtmlAttribute att = img.Attributes["src"];
+                    imgScrs.Add(att.Value);
+                    var src = @"\";
+                    int ind = html.IndexOf($"src=\"{att.Value}\"");
+                    string data = $"src={src}\"{att.Value}\"";
+                    if (att.Value.Contains("http://zabgc.ru"))
+                    {
+                        var path = att.Value.Split('/');
+                        string newpath = string.Empty;
+                        for(int i = 3; i <= path.Length -1; i++)
+                        {
+                            newpath += '/'+path[i];
+                        }
+                      //  System.Windows.Forms.MessageBox.Show(newpath);
+                        html = html.Remove(ind, data.Length).Insert(ind, $"src=\"{newpath}\" ");
+                    }
+                }
+            }
+
+            return html;
+        }
         private string ParseHtml(string Html)
         {
             string html = Html;
@@ -78,6 +130,10 @@ namespace ZabgcTool_SDK_.HtmlRedactor
             }
 
             return html;
+        }
+        public async Task<string> SaveAsync()
+        {
+            return await  SiteSaver(WpfHtmlEditor.Content.GetBodyHtml(true));
         }
         private async Task<string> SiteSaver(string Html)
         {

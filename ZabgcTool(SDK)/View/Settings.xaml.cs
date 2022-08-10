@@ -25,7 +25,7 @@ namespace ZabgcTool_SDK_.View
             //  new Model.Settings(settings.Addres, settings.Login, settings.Password, true, settings.AdminName, ShedulePath.Text,settings.Name,).SaveSettings();
             Save.Click += (s, e) =>
             {
-                new Helper.Settings(FTPaddres.Text, FTPname.Text, FTPpassword.Password, TGB.IsChecked.Value, AdminName.Text, ShedulePath.Text, settings.Name, Autrn.IsChecked.Value, API.Text, settings.ControlData).SaveSettings();
+                new Helper.Settings(FTPaddres.Text, FTPname.Text, FTPpassword.Password, TGB.IsChecked.Value, AdminName.Text, ShedulePath.Text, settings.Name, Autrn.IsChecked.Value, API.Text, settings.ControlData, settings.UserType).SaveSettings();
                 Close();
             };
             Exit.Click += (s, e) =>

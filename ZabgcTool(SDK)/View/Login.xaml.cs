@@ -28,7 +28,7 @@ namespace ZabgcTool_SDK_.View
             Helper.Settings settings = new ZabgcTool_SDK_.Helper.Settings().ReadSettings();
             if (settings.StayOnline == true && true == new Authorization().CheckUserUserWithThisName(settings.Name) && settings.ControlData == ip.ToString())
             {
-                new Loader().Show();
+                new Loader(settings.UserType).Show();
                 Close();
             }
             else
@@ -51,18 +51,36 @@ namespace ZabgcTool_SDK_.View
         {
             SignIn();
         }
-        private void SignIn()
+        private void OpenMainWindow(int Type)
         {
             String host = System.Net.Dns.GetHostName();
             System.Net.IPAddress ip = System.Net.Dns.GetHostByName(host).AddressList[0];
-            bool Autho = new Authorization(Logins.Text, Password.Password).Login();
+            WrongDataText.Visibility = Visibility.Collapsed;
+            new Loader(Type).Show();
             new ZabgcTool_SDK_.Helper.Settings().SetCheckStayOnline((bool)TGB.IsChecked, ip.ToString());
+            new ZabgcTool_SDK_.Helper.Settings().SetType(Type);
             new ZabgcTool_SDK_.Helper.Settings().SetName(Logins.Text);
-            if (Autho == true)
+            Close();
+        }
+        private void SignIn()
+        {
+           
+            (bool,int) Autho = new Authorization(Logins.Text, Password.Password).Login();
+           
+            if (Autho.Item1 == true)
             {
-                WrongDataText.Visibility = Visibility.Collapsed;
-                new Loader().Show();
-                Close();
+                switch (Autho.Item2)
+                {
+                    case (int)Authorization.UserTypes.Admin:
+                        OpenMainWindow(Autho.Item2);
+                        break;
+                    case (int)Authorization.UserTypes.ScheduleAdmin:
+                        OpenMainWindow(Autho.Item2);
+                        break;
+                    default:
+                        break;
+                }
+              
             }
             else
             {

@@ -53,6 +53,10 @@
     <ApplicationIcon>Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AxInterop.MSTSCLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Users\toprat\source\repos\RemoteLibrary\RemoteLibrary\bin\Debug\AxInterop.MSTSCLib.dll</HintPath>
+    </Reference>
     <Reference Include="FastColoredTextBox, Version=2.16.26.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\Алексей Пряников\Desktop\FastColoredTextBox-master\FastColoredTextBox\bin\Debug\FastColoredTextBox.dll</HintPath>
@@ -139,6 +143,7 @@
     <Compile Include="FTP\RenameWindow.xaml.cs">
       <DependentUpon>RenameWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FTP\SearchCommand.cs" />
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="HtmlRedactor\EditRedactor\EditRedactor.xaml.cs">
       <DependentUpon>EditRedactor.xaml</DependentUpon>
@@ -164,6 +169,11 @@
     <Compile Include="Model\Data\Qusestions.cs" />
     <Compile Include="Helper\Settings.cs" />
     <Compile Include="Model\Data\RemotePC.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RemoteDesktop\RDPCore.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -172,6 +182,9 @@
     </Compile>
     <Compile Include="View\CommentEdit.xaml.cs">
       <DependentUpon>CommentEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DeleteDialog.xaml.cs">
+      <DependentUpon>DeleteDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Loader.xaml.cs">
       <DependentUpon>Loader.xaml</DependentUpon>
@@ -231,6 +244,9 @@
     <Compile Include="View\QuestionEdit.xaml.cs">
       <DependentUpon>QuestionEdit.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SearchWindow.xaml.cs">
+      <DependentUpon>SearchWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
@@ -263,6 +279,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CommentEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DeleteDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -361,6 +381,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\SearchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -385,8 +409,8 @@
     <Resource Include="View\Icons\Schedule.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\DEFAULT.png" />
-    <Resource Include="FTP\FILE.png" />
+    <Resource Include="FTP\Icons\DEFAULT.png" />
+    <Resource Include="FTP\Icons\FILE.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="View\Icons\leftArrow.png" />
@@ -430,46 +454,46 @@
     <Resource Include="FTP\Loading.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.css.png" />
-    <Resource Include="FTP\.gif.png" />
-    <Resource Include="FTP\.html.png" />
-    <Resource Include="FTP\.jpg.png" />
-    <Resource Include="FTP\.js.png" />
-    <Resource Include="FTP\.png.png" />
-    <Resource Include="FTP\.txt.png" />
-    <Resource Include="FTP\DIR.png" />
-    <Resource Include="FTP\swf.png" />
+    <Resource Include="FTP\Icons\.css.png" />
+    <Resource Include="FTP\Icons\.gif.png" />
+    <Resource Include="FTP\Icons\.html.png" />
+    <Resource Include="FTP\Icons\.jpg.png" />
+    <Resource Include="FTP\Icons\.js.png" />
+    <Resource Include="FTP\Icons\.png.png" />
+    <Resource Include="FTP\Icons\.txt.png" />
+    <Resource Include="FTP\Icons\DIR.png" />
+    <Resource Include="FTP\Icons\swf.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.pdf.png" />
-    <Resource Include="FTP\.php.png" />
+    <Resource Include="FTP\Icons\.pdf.png" />
+    <Resource Include="FTP\Icons\.php.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.xml.png" />
+    <Resource Include="FTP\Icons\.xml.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.ico.png" />
+    <Resource Include="FTP\Icons\.ico.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.ini.png" />
+    <Resource Include="FTP\Icons\.ini.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.htaccess.png" />
+    <Resource Include="FTP\Icons\.htaccess.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="View\Icons\Notyfy.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.htm.png" />
+    <Resource Include="FTP\Icons\.htm.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\350.gif" />
+    <Resource Include="FTP\Icons\350.gif" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FTP\Blocks-1s-200px.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FTP\.sql.png" />
+    <Resource Include="FTP\Icons\.sql.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="View\Load.gif" />
@@ -500,14 +524,26 @@
     <Resource Include="Logo.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\close_window_144px.png" />
+    <Content Include="SpiceLogicWPFHtmlEditor.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="View\Pages\Loading.gif" />
     <Resource Include="View\logga.png" />
     <Resource Include="View\Logo.ico" />
     <Resource Include="View\Pages\Apiloading.gif" />
-    <Resource Include="View\Pages\Apiload.gif" />
     <Resource Include="View\Pages\Load.gif" />
-    <Resource Include="FTP\.doc.png" />
-    <Resource Include="FTP\.docx.png" />
-    <Content Include="Microsoft.mshtml.dll" />
+    <Resource Include="FTP\Icons\.doc.png" />
+    <Resource Include="FTP\Icons\.docx.png" />
+    <Content Include="AxInterop.MSTSCLib.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Interop.MSTSCLib.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Microsoft.mshtml.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="AxMSTSCLib">
@@ -529,6 +565,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="RemoteDesktop\RDPCore.resx">
       <DependentUpon>RDPCore.cs</DependentUpon>
     </EmbeddedResource>

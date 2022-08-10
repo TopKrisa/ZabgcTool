@@ -25,11 +25,9 @@ namespace OSSLogerZabgc
             InitializeComponent();
             IP.Content = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
             Pc_Name.Content = Dns.GetHostName();
-            DNS.Content = string.Empty;
-            foreach (var dns in GetDnsAdresses(true, false))
-            {
-                DNS.Content += dns.ToString() + "\n";
-            }
+            DNS.Content = IPGlobalProperties.GetIPGlobalProperties().DomainName;
+
+       
         }
 
         private async void butn_Click(object sender, RoutedEventArgs e)
@@ -54,7 +52,7 @@ namespace OSSLogerZabgc
                     {
                         IP = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString(),
                         Name = Dns.GetHostName(),
-                        DNS = GetDnsAdresses(true, false)[0].ToString(),
+                        DNS = IPGlobalProperties.GetIPGlobalProperties().DomainName,
                         Condition = $"SystemData : {HealthCheck()[2]}\nInternetData : {Tester.GetInternetInfo("zabedu.ru")}\n ServiceData = {Tester.GetStartedServices()}64 bit ?: {Environment.Is64BitOperatingSystem} \n OS Version:{Environment.OSVersion}"
 
                     }, pc.Id);

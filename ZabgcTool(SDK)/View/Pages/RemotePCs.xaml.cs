@@ -47,7 +47,7 @@ namespace ZabgcTool_SDK_.View.Pages
             Model.Data.RemotePC remotePC = (Model.Data.RemotePC)(sender as Button).DataContext;
             if (!System.Windows.Forms.Application.OpenForms.OfType<RemoteDesktop.RDPCore>().Any())
             {
-                new RemoteDesktop.RDPCore(remotePC.IP, "", "",remotePC.Name).Show();
+                new RemoteDesktop.RDPCore(remotePC.IP, "", "",remotePC.Name, remotePC.DNS).Show();
             }
         }
 

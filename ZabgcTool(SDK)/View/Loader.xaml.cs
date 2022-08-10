@@ -19,10 +19,13 @@ namespace ZabgcTool_SDK_.View
     /// </summary>
     public partial class Loader : Window
     {
-        public Loader()
+        private int _type;
+        public Loader(int Type)
         {
             InitializeComponent();
+            _type = Type;
             LoadWindow(new Helper.Settings().ReadSettings().APIPath);
+            
         }
         private async void LoadWindow(string Hostname)
         {
@@ -32,7 +35,7 @@ namespace ZabgcTool_SDK_.View
             {
                 NotConnectedPopUp.Visibility = Visibility.Collapsed;
                 LoadAnim.Visibility = Visibility.Visible;
-                var Window = new MainWindow();
+                var Window = new MainWindow(_type);
                 await Task.Delay(2000);
                 Window.Show();
                 Close();

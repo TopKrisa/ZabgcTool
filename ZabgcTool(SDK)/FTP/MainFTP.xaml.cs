@@ -1,20 +1,17 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using ZabgcTool_SDK_.View;
-using ZabgcTool_SDK_.Model;
-using Microsoft.Toolkit.Uwp.Notifications;
-using System.Diagnostics;
 
 namespace ZabgcTool_SDK_.FTP
 {
@@ -23,8 +20,8 @@ namespace ZabgcTool_SDK_.FTP
     /// </summary>
     public partial class MainFTP : Page
     {
-        private ZabgcTool_SDK_.Helper.Settings Settings = new ZabgcTool_SDK_.Helper.Settings().ReadSettings();
-        
+        private Helper.Settings Settings = new Helper.Settings().ReadSettings();
+
         private string prevAdress = "ftp://";
 
         private string Addres;
@@ -47,13 +44,13 @@ namespace ZabgcTool_SDK_.FTP
         public bool Hash = false;
         private string DirName;
         private string DirAddress;
-        
-        
+
+
         public MainFTP(Window Owner)
         {
             InitializeComponent();
             MainWindow = Owner;
-           
+
             if (string.IsNullOrEmpty(Settings.Addres) || string.IsNullOrEmpty(Settings.Password) || string.IsNullOrEmpty(Settings.Login))
             {
                 NoFTPData.Visibility = Visibility.Visible;
@@ -65,7 +62,7 @@ namespace ZabgcTool_SDK_.FTP
                 Addres = Settings.Addres;
                 Login = Settings.Login;
                 Password = Settings.Password;
-               
+
                 Message($"Попытка подключения к {Addres}");
                 string Hostname = Settings.Addres;
                 var SplitedName = Hostname.Split('/');
@@ -89,14 +86,15 @@ namespace ZabgcTool_SDK_.FTP
                 {
                     new Settings(Owner).Show();
                 }
- 
+
             };
+           
         }
-       private void Message(string message)
+        private void Message(string message)
         {
-           CommandsList.Items.Add($"<{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}>: {message}");
+            CommandsList.Items.Add($"<{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}>: {message}");
             var Scroll = FindScrollViewer(CommandsList);
-            if(Scroll != null)
+            if (Scroll != null)
             {
                 Scroll.ScrollChanged += (s, e) =>
                 {
@@ -104,7 +102,7 @@ namespace ZabgcTool_SDK_.FTP
                         Scroll.ScrollToBottom();
                 };
             }
-         
+
         }
         private static ScrollViewer FindScrollViewer(DependencyObject root)
         {
@@ -123,7 +121,7 @@ namespace ZabgcTool_SDK_.FTP
 
             return null;
         }
-        private FtpWebRequest createRequest(string uri, string method)
+        public FtpWebRequest createRequest(string uri, string method)
         {
             var Request = (FtpWebRequest)WebRequest.Create(uri);
             Request.Credentials = new NetworkCredential(Login, Password);
@@ -133,82 +131,9 @@ namespace ZabgcTool_SDK_.FTP
             Request.UsePassive = Passive;
             return Request;
         }
-        async void RemoveDirectoryWithFiles(string DirectoryName)
-        {   string Directory = DirectoryName+@"/";
-            try
-            {
-                LoadAnim.Visibility = Visibility.Visible;
-                var RawFTPdata = new List<string>();
-               
-                var request = createRequest(Directory, WebRequestMethods.Ftp.ListDirectoryDetails);
-
-                using (FtpWebResponse response = await request.GetResponseAsync() as FtpWebResponse)
-                {
-                    using (var stream = response.GetResponseStream())
-                    {
-                        using (var reader = new StreamReader(stream, true))
-                        {
-                            while (!reader.EndOfStream)
-                            {
-                                RawFTPdata.Add(await reader.ReadLineAsync());
-                            }
-                        }
-                    }
-                }
-                //ResponseProgresBar.Value = 0;
-                RawFTPdata.ToArray();
-                Regex regex = new Regex(@"^([d-])([rwxt-]{3}){3}\s+\d{1,}\s+.*?(\d{1,})\s+(\w+\s+\d{1,2}\s+(?:\d{4})?)(\d{1,2}:\d{2})?\s+(.+?)\s?$",
-                                RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
-                List<FileDirecoryInfo> Items = RawFTPdata
-                            .Select(s =>
-                            {
-                                Match match = regex.Match(s);
-                                if (match.Length > 5)
-                                {
-                                // Устанавливаем тип, чтобы отличить файл от папки (используется также для установки рисунка)
-                                string type = match.Groups[1].Value == "d" ? "DIR.png" : $"{Path.GetExtension(match.Groups[6].Value)}.png"; ;
-
-                                // Размер задаем тольк typeо для файлов, т.к. для папок возвращается
-                                // размер ярлыка 4кб, а не самой папки
-                                string size = "";
-                                    if (type == $"{Path.GetExtension(match.Groups[6].Value)}.png")
-                                        size = (Int32.Parse(match.Groups[3].Value.Trim()) / 1024).ToString() + " кБ";
-
-                                    return new FileDirecoryInfo(size, type, match.Groups[6].Value, match.Groups[4].Value, Addres);
-                                }
-                                else return new FileDirecoryInfo();
-                            }).OrderBy(x => x.Type == "DIR.png").ToList();
-                Items = Items.Where(x => x.Name != "..").ToList();
-                Items = Items.Where(x => x.Name != ".").ToList();
-                foreach (var item in Items)
-                {
-
-                    if (item.Type != "DIR.png" && item.Name != "Назад")
-                    {
-                        RemoveFile(DirAddress,$"{Directory}{item.Name}");
-                    }
-                    else if (item.Type == "DIR.png" && item.Type != "Назад")
-                    {
-
-                        RemoveDirectoryWithFiles(DirAddress + Directory + item.Name);
-                        RemoveDirectory($"{DirAddress}", $"{Directory}{item.Name}");
-                    }
-                }
-                RemoveDirectory(DirAddress,DirName);
-                RemoveDirectory(DirAddress,Directory);
-                LoadAnim.Visibility = Visibility.Collapsed;
-                ASFTP();
-            }
-            catch(Exception ex)
-            {
-                Message($"{ex.Message} {DirAddress}{Directory} ");
-                LoadAnim.Visibility = Visibility.Collapsed;
-            }
-       
-        }
         async void ASFTP()
         {
-           
+
             try
             {
                 if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
@@ -245,33 +170,33 @@ namespace ZabgcTool_SDK_.FTP
                     Regex regex = new Regex(@"^([d-])([rwxt-]{3}){3}\s+\d{1,}\s+.*?(\d{1,})\s+(\w+\s+\d{1,2}\s+(?:\d{4})?)(\d{1,2}:\d{2})?\s+(.+?)\s?$",
                                     RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
                     List<FileDirecoryInfo> Items = new List<FileDirecoryInfo>();
-                    Items.Add(new FileDirecoryInfo("", "DEFAULT.png", "Назад", "", Addres));
+                    Items.Add(new FileDirecoryInfo("", "Icons/DEFAULT.png", "Назад", "", Addres));
                     Items.AddRange(RawFTPdata
                                 .Select(s =>
                                 {
                                     Match match = regex.Match(s);
                                     if (match.Length > 5)
                                     {
-                                    // Устанавливаем тип, чтобы отличить файл от папки (используется также для установки рисунка)
-                                    string type = match.Groups[1].Value == "d" ? "DIR.png" : $"{Path.GetExtension(match.Groups[6].Value)}.png"; ;
+                                        // Устанавливаем тип, чтобы отличить файл от папки (используется также для установки рисунка)
+                                        string type = match.Groups[1].Value == "d" ? "Icons/DIR.png" : $"Icons/{Path.GetExtension(match.Groups[6].Value)}.png"; ;
 
-                                    // Размер задаем тольк typeо для файлов, т.к. для папок возвращается
-                                    // размер ярлыка 4кб, а не самой папки
-                                    string size = "";
+                                        // Размер задаем тольк typeо для файлов, т.к. для папок возвращается
+                                        // размер ярлыка 4кб, а не самой папки
+                                        string size = "";
                                         if (type == $"{Path.GetExtension(match.Groups[6].Value)}.png")
                                             size = (Int32.Parse(match.Groups[3].Value.Trim()) / 1024).ToString() + " кБ";
 
                                         return new FileDirecoryInfo(size, type, match.Groups[6].Value, match.Groups[4].Value, Addres);
                                     }
                                     else return new FileDirecoryInfo();
-                                }).OrderByDescending(x => x.Type == "DIR.png").ToList());
+                                }).OrderByDescending(x => x.Type == "Icons/DIR.png").ToList());
 
                     //// Добавить поле, которое будет возвращать пользователя на директорию выше
 
-                   
+
                     Items = Items.Where(x => x.Name != "..").ToList();
                     Items = Items.Where(x => x.Name != ".").ToList();
-                  //  Items.Reverse();
+                    //  Items.Reverse();
                     lbx_files.DataContext = Items;
                     LoadAnim.Visibility = Visibility.Collapsed;
                     TextUri.Text = Addres;
@@ -284,14 +209,14 @@ namespace ZabgcTool_SDK_.FTP
                         Message($"{Addres}");
                     }
                 }
-              
+
             }
             catch (Exception e)
             {
                 Message(e.Message);
             }
         }
-       
+
         private void folder_Click(object sender, MouseButtonEventArgs e)
         {
             Popups.IsOpen = false;
@@ -302,7 +227,7 @@ namespace ZabgcTool_SDK_.FTP
             FileDirecoryInfo fdi = (FileDirecoryInfo)(sender as StackPanel).DataContext;
             TypeFile.Text = Path.GetExtension(fdi.Name);
             SizeFiles.Text = fdi.FileSize;
-            if(String.IsNullOrEmpty(fdi.FileSize))
+            if (fdi.Type == "Icons/DIR.png")
             {
                 TypeFile.Text = "Папка";
                 SizeFiles.Text = "Нет";
@@ -310,44 +235,44 @@ namespace ZabgcTool_SDK_.FTP
 
             if (e.ClickCount >= 2)
             {
-                if (fdi.Type == "DIR.png")
+                if (fdi.Type == "Icons/DIR.png")
                 {
                     prevAdress = fdi.adress;
                     Addres = fdi.adress + fdi.Name + "/";
                     ASFTP();
                 }
-                else if (fdi.Type == "DEFAULT.png")
+                else if (fdi.Type == "Icons/DEFAULT.png")
                 {
                     if (fdi.Name == "Назад")
                     {
-                       
-                            string addr = "";
-                            string[] splitwords = fdi.adress.Split(new char[] { '/' });
-                            for (int inc = 0; inc <= splitwords.Count() - 3; inc++)
-                            {
-                                addr += $"{splitwords[inc]}/";
 
-                            }
-                            Addres = addr;
+                        string addr = "";
+                        string[] splitwords = fdi.adress.Split(new char[] { '/' });
+                        for (int inc = 0; inc <= splitwords.Count() - 3; inc++)
+                        {
+                            addr += $"{splitwords[inc]}/";
+
+                        }
+                        Addres = addr;
                         if (Addres != "ftp://zabedu.ru/")
                         {
                             ASFTP();
                         }
-                       
+
                     }
 
                 }
                 else
                 {
                     FileName = fdi.Name;
-                    
+
                 }
             }
 
         }
         private void StackPanel_Drop(object sender, DragEventArgs e)
         {
-            
+
             List<string> Paths = new List<string>();
             foreach (string obj in (string[])e.Data.GetData(DataFormats.FileDrop))
             {
@@ -357,21 +282,22 @@ namespace ZabgcTool_SDK_.FTP
                 }
                 else
                 {
-                    
+
                     Paths.Add(obj);
                 }
             }
-            FtpUploader(Paths,DirName,Addres);
-            
+            FtpUploader(Paths, DirName, Addres);
+
 
         }
- public async void FtpUploader(string address,List<string> list)
+        public async void FtpUploader(string address, List<string> list)
         {
-            
-            if(list.Count == 1)
-            Message($"Начало загрузки {list.Count} файлa.");
+
+            if (list.Count == 1)
+                Message($"Начало загрузки {list.Count} файлa.");
             else
-             Message($"Начало загрузки {list.Count} файлов.");
+                Message($"Начало загрузки {list.Count} файлов.");
+            ResponseProgresBar.Maximum = list.Count;
             foreach (string source in list)
             {
                 {////////////////////////////////////////////////////////////
@@ -382,7 +308,7 @@ namespace ZabgcTool_SDK_.FTP
                     {
                         using (var fileStream = System.IO.File.Open(source, FileMode.Open))
                         {
-                           
+
                             int num;
 
                             byte[] buffer = new byte[bufferSize];
@@ -393,49 +319,51 @@ namespace ZabgcTool_SDK_.FTP
                                     Console.Write("#");
 
                                 await stream.WriteAsync(buffer, 0, num);
-                         
+
                             }
                         }
                         Message($"Файл {source} загружен.");
+                        ResponseProgresBar.Value++;
                     }
                 }
-               
+
             }
+            ResponseProgresBar.Value = 0;
             ASFTP();
-          
+
         }
-       public async void FTPSaver(string list, string DirName)
+        public async void FTPSaver(string list, string DirName)
         {
             try
             {
                 //MessageBox.Show(DirName);
-                    {////////////////////////////////////////////////////////////
+                {////////////////////////////////////////////////////////////
 
-                        var request = createRequest($@"{DirName}/{Path.GetFileName(list)}", WebRequestMethods.Ftp.UploadFile);
+                    var request = createRequest($@"{DirName}/{Path.GetFileName(list)}", WebRequestMethods.Ftp.UploadFile);
 
-                        using (var stream = await request.GetRequestStreamAsync())
+                    using (var stream = await request.GetRequestStreamAsync())
+                    {
+                        using (var fileStream = System.IO.File.Open(list, FileMode.Open))
                         {
-                            using (var fileStream = System.IO.File.Open(list, FileMode.Open))
+                            int num;
+
+                            byte[] buffer = new byte[bufferSize];
+
+                            while ((num = fileStream.Read(buffer, 0, buffer.Length)) > 0)
                             {
-                                int num;
+                                if (Hash)
+                                    Console.Write("#");
 
-                                byte[] buffer = new byte[bufferSize];
+                                await stream.WriteAsync(buffer, 0, num);
 
-                                while ((num = fileStream.Read(buffer, 0, buffer.Length)) > 0)
-                                {
-                                    if (Hash)
-                                        Console.Write("#");
-
-                                    await stream.WriteAsync(buffer, 0, num);
-
-                                }
                             }
-                            Message($"Файл {list} загружен.");
-                        ResponseProgresBar.Visibility = Visibility.Hidden;
                         }
+                        Message($"Файл {list} загружен.");
+                        ResponseProgresBar.Visibility = Visibility.Hidden;
                     }
+                }
 
-                
+
                 Message($"{list} сохранен");
                 new ToastContentBuilder()
             .AddArgument("action", "viewConversation")
@@ -452,7 +380,7 @@ namespace ZabgcTool_SDK_.FTP
 
 
         }
-       public async void FtpUploader(List<string> list, string DirName, string Address)
+        public async void FtpUploader(List<string> list, string DirName, string Address)
         {
             try
             {
@@ -480,7 +408,7 @@ namespace ZabgcTool_SDK_.FTP
                                         Console.Write("#");
 
                                     await stream.WriteAsync(buffer, 0, num);
-                                   
+
                                 }
                             }
                             Message($"Файл {source} загружен.");
@@ -496,7 +424,7 @@ namespace ZabgcTool_SDK_.FTP
               .Show();
                 ASFTP();
             }
-            catch(Exception we)
+            catch (Exception we)
             {
                 MessageBox.Show($"{we.Message},{Addres},{DirName},{FileName}");
 
@@ -513,7 +441,7 @@ namespace ZabgcTool_SDK_.FTP
             MainWindow.Activate();
 
             FileDirecoryInfo fdi = (FileDirecoryInfo)(sender as StackPanel).DataContext;
-            if (fdi.Type == "DIR.png")
+            if (fdi.Type == "Icons/DIR.png")
             {
                 AminDrag.IsOpen = false;
             }
@@ -521,7 +449,7 @@ namespace ZabgcTool_SDK_.FTP
             {
                 AminDrag.IsOpen = true;
             }
-            if (fdi.Type == "DIR.png" && fdi.Name !="." && fdi.Name != "..")
+            if (fdi.Type == "Icons/DIR.png" && fdi.Name != "." && fdi.Name != "..")
             {
                 DirName = fdi.Name;
             }
@@ -535,17 +463,17 @@ namespace ZabgcTool_SDK_.FTP
         private void StackPanel_DragLeave(object sender, DragEventArgs e)
         {
         }
-        
-       private void CreateDirectory_Button(object sender, RoutedEventArgs e)
+
+        private void CreateDirectory_Button(object sender, RoutedEventArgs e)
         {
-              Popups.IsOpen = false;
+            Popups.IsOpen = false;
             PopupDIR.IsOpen = false;
             AminDrag.IsOpen = false;
             FunctionGrid.Visibility = Visibility.Collapsed; var CreateW = new CreateDirecrory();
             CreateW.ShowDialog();
-            if(CreateW.IsCreated == true) 
+            if (CreateW.IsCreated == true)
             {
-                var request = createRequest(Addres+CreateW.NewName, WebRequestMethods.Ftp.MakeDirectory);
+                var request = createRequest(Addres + CreateW.NewName, WebRequestMethods.Ftp.MakeDirectory);
                 using (var response = request.GetResponse() as FtpWebResponse)
                 {
                     Message(response.StatusDescription);
@@ -590,7 +518,7 @@ namespace ZabgcTool_SDK_.FTP
             Popups.IsOpen = false;
             PopupDIR.IsOpen = false;
             AminDrag.IsOpen = false;
-          
+
         }
 
         private void Save_Button(object sender, RoutedEventArgs e)
@@ -599,45 +527,151 @@ namespace ZabgcTool_SDK_.FTP
             PopupDIR.IsOpen = false;
             AminDrag.IsOpen = false;
             FunctionGrid.Visibility = Visibility.Collapsed;
-            DownloadFile(FileName, $@"{Syroot.Windows.IO.KnownFolders.Downloads.Path}\{FileName}",Addres);
+            DownloadFile(FileName, $@"{Syroot.Windows.IO.KnownFolders.Downloads.Path}\{FileName}", Addres);
 
         }
-        private void DeleteDirectory_Button(object sender, RoutedEventArgs e)
+        private async void DeleteDirectory_Button(object sender, RoutedEventArgs e)
         {
             Popups.IsOpen = false;
             PopupDIR.IsOpen = false;
             AminDrag.IsOpen = false;
-            FunctionGrid.Visibility = Visibility.Collapsed; RemoveDirectoryWithFiles(Addres+DirName);
-            //RemoveDirectory(DirName);
-           
-           
+            FunctionGrid.Visibility = Visibility.Collapsed;
+            await RemoveDirectoryWithFiles(Addres + DirName + @"/");
+            RemoveDirectory(Addres + DirName + @"/");
+
+
         }
-        private void RemoveDirectory(string DirectoryAddress,string DirectoryName)
+        async Task RemoveDirectoryWithFiles(string DirectoryName)
         {
-            var request = createRequest($@"{DirectoryAddress}{DirectoryName}/", WebRequestMethods.Ftp.RemoveDirectory);
+            string Directory = DirectoryName;
+            try
+            {
+                LoadAnim.Visibility = Visibility.Visible;
+                var RawFTPdata = new List<string>();
+
+                var request = createRequest(Directory, WebRequestMethods.Ftp.ListDirectoryDetails);
+
+                using (FtpWebResponse response = await request.GetResponseAsync() as FtpWebResponse)
+                {
+                    using (var stream = response.GetResponseStream())
+                    {
+                        using (var reader = new StreamReader(stream, true))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                RawFTPdata.Add(await reader.ReadLineAsync());
+                            }
+                        }
+                    }
+                }
+                #region Validation
+                //ResponseProgresBar.Value = 0;
+                RawFTPdata.ToArray();
+                Regex regex = new Regex(@"^([d-])([rwxt-]{3}){3}\s+\d{1,}\s+.*?(\d{1,})\s+(\w+\s+\d{1,2}\s+(?:\d{4})?)(\d{1,2}:\d{2})?\s+(.+?)\s?$",
+                                RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+                List<FileDirecoryInfo> Items = RawFTPdata
+                            .Select(s =>
+                            {
+                                Match match = regex.Match(s);
+                                if (match.Length > 5)
+                                {
+                                    // Устанавливаем тип, чтобы отличить файл от папки (используется также для установки рисунка)
+                                    string type = match.Groups[1].Value == "d" ? "Icons/DIR.png" : $"{Path.GetExtension(match.Groups[6].Value)}.png"; ;
+
+                                    // Размер задаем тольк typeо для файлов, т.к. для папок возвращается
+                                    // размер ярлыка 4кб, а не самой папки
+                                    string size = "";
+                                    if (type == $"{Path.GetExtension(match.Groups[6].Value)}.png")
+                                        size = (Int32.Parse(match.Groups[3].Value.Trim()) / 1024).ToString() + " кБ";
+
+                                    return new FileDirecoryInfo(size, type, match.Groups[6].Value, match.Groups[4].Value, Addres);
+                                }
+                                else return new FileDirecoryInfo();
+                            }).OrderBy(x => x.Type == "Icons/DIR.png").ToList();
+                Items = Items.Where(x => x.Name != "..").ToList();
+                Items = Items.Where(x => x.Name != ".").ToList();
+                #endregion
+                List<FileDirecoryInfo> Files = new List<FileDirecoryInfo>();
+                List<FileDirecoryInfo> DIrectories = new List<FileDirecoryInfo>();
+
+                foreach (var item in Items)
+                {
+
+                    if (item.Type != "Icons/DIR.png" && item.Name != "Назад")
+                    {
+                        Files.Add(item);
+                        //RemoveFile(DirAddress, $"{Directory}{item.Name}");
+                    }
+                    else if (item.Type == "Icons/DIR.png" && item.Type != "Назад")
+                    {
+
+                        DIrectories.Add(item);
+                        //await RemoveDirectoryWithFiles($@"{Directory}{item.Name}/");
+                        //RemoveDirectory($@"{Directory}{item.Name}/");
+                    }
+                }
+                foreach (var file in Files)
+                {
+                   await RemoveFile($"{Directory}{file.Name}");
+                }   
+                foreach (var directory in DIrectories)
+                {
+                    await RemoveDirectoryWithFiles($@"{Directory}{directory.Name}/");
+                    RemoveDirectory($@"{Directory}{directory.Name}/");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message($"{ex.Message} {Directory} ");
+                LoadAnim.Visibility = Visibility.Collapsed;
+            }
+            finally
+            {
+
+                //RemoveDirectory($@"{Directory}");
+                ASFTP();
+
+            }
+
+        }
+        public async Task RemoveFile(string FileName)
+        {
+            var Request = createRequest(FileName, WebRequestMethods.Ftp.DeleteFile);
+            using (var response = await Request.GetResponseAsync())
+            {
+                string ResponseMessage = response.ContentLength.ToString();
+            }
+        
+        }
+        private void RemoveDirectory(string DirectoryAddress)
+        {
+            var request = createRequest($@"{DirectoryAddress}", WebRequestMethods.Ftp.RemoveDirectory);
             using (var response = (FtpWebResponse)request.GetResponse())
             {
                 string ResponseMessage = response.StatusDescription;
             }
-            Message($"Папка {DirectoryName} удалена.");
+            Message($"Папка удалена.");
+            LoadAnim.Visibility = Visibility.Collapsed;
             ASFTP();
         }
-            private void Delete_Button(object sender, RoutedEventArgs e)
+        private void Delete_Button(object sender, RoutedEventArgs e)
         {
             Popups.IsOpen = false;
             PopupDIR.IsOpen = false;
             AminDrag.IsOpen = false;
-            FunctionGrid.Visibility = Visibility.Collapsed; RemoveFile(Addres,FileName);            
+            FunctionGrid.Visibility = Visibility.Collapsed; RemoveFile(Addres, FileName);
             ASFTP();
         }
-        public async void RemoveFile(string Address,string FileName)
+        public async Task RemoveFile(string Address, string FileName)
         {
-            var Request = createRequest(Address + FileName, WebRequestMethods.Ftp.DeleteFile);
+            var Request = createRequest(FileName, WebRequestMethods.Ftp.DeleteFile);
             using (var response = await Request.GetResponseAsync())
             {
-              string ResponseMessage =  response.ContentLength.ToString();
+                string ResponseMessage = response.ContentLength.ToString();
             }
-                Message($"Файл {FileName} удален.");
+            Message($"Файл {FileName} удален.");
             new ToastContentBuilder()
             .AddArgument("action", "viewConversation")
             .AddArgument("conversationId", 9813)
@@ -645,7 +679,7 @@ namespace ZabgcTool_SDK_.FTP
               .Show();
             ASFTP();
         }
-        public async void DownloadFile(string source, string dest,string Address)
+        public async void DownloadFile(string source, string dest, string Address)
         {
             var request = createRequest(Address + source, WebRequestMethods.Ftp.DownloadFile);
 
@@ -665,16 +699,17 @@ namespace ZabgcTool_SDK_.FTP
                             if (Hash)
                                 Console.Write("#");
 
-                          await  fs.WriteAsync(buffer, 0, readCount);
+                            await fs.WriteAsync(buffer, 0, readCount);
 
                             ResponseProgresBar.Maximum = Convert.ToDouble(fs.Length / 1024);
                             readCount = stream.Read(buffer, 0, bufferSize);
                             ResponseProgresBar.Value = Convert.ToDouble(fs.Position / 1024);
                         }
+                        ResponseProgresBar.Value = 0;
                     }
                 }
                 Message($"Файл скачан ({dest})");
-                
+
             }
 
             new ToastContentBuilder()
@@ -685,7 +720,7 @@ namespace ZabgcTool_SDK_.FTP
               .Show();
         }
         private void Rename_Button(object se, RoutedEventArgs e)
-       {
+        {
             Popups.IsOpen = false;
             PopupDIR.IsOpen = false;
             AminDrag.IsOpen = false;
@@ -693,12 +728,12 @@ namespace ZabgcTool_SDK_.FTP
             var RenameW = new RenameWindow(FileName);
             RenameW.ShowDialog();
 
-            if(RenameW.IsRenamed == true)
+            if (RenameW.IsRenamed == true)
             {
-                Message(Rename(FileName, RenameW.NewName,Addres));
+                Message(Rename(FileName, RenameW.NewName, Addres));
             }
             ASFTP();
-       }
+        }
         private void SaveAs_Button(object sender, RoutedEventArgs e)
         {
             Popups.IsOpen = false;
@@ -709,7 +744,7 @@ namespace ZabgcTool_SDK_.FTP
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 Message($"{FileName} , {dialog.SelectedPath}");
-               DownloadFiles(FileName, dialog.SelectedPath+@"/");
+                DownloadFiles(FileName, dialog.SelectedPath + @"/");
             }
         }
         private void StackPanel_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -717,11 +752,11 @@ namespace ZabgcTool_SDK_.FTP
             Popups.IsOpen = false;
             PopupDIR.IsOpen = false;
             AminDrag.IsOpen = false;
-            FunctionGrid.Visibility = Visibility.Collapsed; 
+            FunctionGrid.Visibility = Visibility.Collapsed;
             try
             {
                 FileDirecoryInfo fdi = (FileDirecoryInfo)(sender as StackPanel).DataContext;
-                if (fdi.Type == "DEFAULT.png")
+                if (fdi.Type == "Icons/DEFAULT.png")
                 {
                     if (fdi.Name == "Назад")
                     {
@@ -729,13 +764,13 @@ namespace ZabgcTool_SDK_.FTP
                         PopupDIR.IsOpen = false;
                     }
                 }
-                else if(fdi.Type == "DIR.png")
+                else if (fdi.Type == "Icons/DIR.png")
                 {
                     PopupDIR.IsOpen = true;
                     DirName = fdi.Name;
                     DirAddress = fdi.adress;
                 }
-                else 
+                else
                 {
                     FileName = fdi.Name;
                     Popups.IsOpen = true;
@@ -747,14 +782,14 @@ namespace ZabgcTool_SDK_.FTP
 
 
         }
-
+        #region Handlers
         private void OpenFolder_Button(object sender, RoutedEventArgs e)
         {
             PopupDIR.IsOpen = false;
             Addres = DirAddress + DirName + "/";
             ASFTP();
         }
-        public string Rename(string CurrentName, string newName,string Address)
+        public string Rename(string CurrentName, string newName, string Address)
         {
             var request = createRequest(Address + Path.GetFileName(CurrentName), WebRequestMethods.Ftp.Rename);
             request.RenameTo = newName;
@@ -772,11 +807,11 @@ namespace ZabgcTool_SDK_.FTP
             folderBrowserDialog.Description = "Папка для загрузки";
             if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                string path = folderBrowserDialog.SelectedPath +"\\"+ DirName + "\\";
+                string path = folderBrowserDialog.SelectedPath + "\\" + DirName + "\\";
                 Directory.CreateDirectory(path);
                 Message(folderBrowserDialog.SelectedPath);
                 Download(DirAddress + DirName + "/", path);
-             }
+            }
 
         }
 
@@ -815,6 +850,7 @@ namespace ZabgcTool_SDK_.FTP
             AminDrag.IsOpen = false;
             FunctionGrid.Visibility = Visibility.Collapsed;
         }
+        #endregion
         private void MassDownload(object sender, RoutedEventArgs e)
         {
             Popups.IsOpen = false;
@@ -826,8 +862,8 @@ namespace ZabgcTool_SDK_.FTP
             folderBrowserDialog.Description = "Папка для загрузки";
             if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-               Message(folderBrowserDialog.SelectedPath);
-               Download(@"ftp://zabedu.ru/web/", folderBrowserDialog.SelectedPath+@"\");
+                Message(folderBrowserDialog.SelectedPath);
+                Download(@"ftp://zabedu.ru/web/", folderBrowserDialog.SelectedPath + @"\");
             }
             new ToastContentBuilder()
                  .AddArgument("action", "viewConversation")
@@ -837,111 +873,110 @@ namespace ZabgcTool_SDK_.FTP
             .Show();
 
         }
-    
-        async void Download(string DirName, string destenation)
+
+        async Task Download(string DirName, string destenation)
         {
 
             try
             {
-                     //DirAddress += $"{DirName}/";
-                    
-                    LoadAnim.Visibility = Visibility.Visible;
-                Message(DirAddress+DirName);
-                    var RawFTPdata = new List<string>();
+                //DirAddress += $"{DirName}/";
+                #region
+                LoadAnim.Visibility = Visibility.Visible;
+                Message(DirAddress + DirName);
+                var RawFTPdata = new List<string>();
 
-                    var request = createRequest($"{DirName}", WebRequestMethods.Ftp.ListDirectoryDetails);
-                     request.Timeout = 6000000;
-                    using (FtpWebResponse response = await request.GetResponseAsync() as FtpWebResponse)
+                var request = createRequest($"{DirName}", WebRequestMethods.Ftp.ListDirectoryDetails);
+                request.Timeout = 60000000;
+                using (FtpWebResponse response = await request.GetResponseAsync() as FtpWebResponse)
+                {
+                    using (var stream = response.GetResponseStream())
                     {
-                        using (var stream = response.GetResponseStream())
+                        using (var reader = new StreamReader(stream, true))
                         {
-                            using (var reader = new StreamReader(stream, true))
+                            while (!reader.EndOfStream)
                             {
-                                while (!reader.EndOfStream)
-                                {
-                                    RawFTPdata.Add(await reader.ReadLineAsync());
-                                }
+                                RawFTPdata.Add(await reader.ReadLineAsync());
                             }
                         }
                     }
-                    //ResponseProgresBar.Value = 0;
-                    RawFTPdata.ToArray();
-                    Regex regex = new Regex(@"^([d-])([rwxt-]{3}){3}\s+\d{1,}\s+.*?(\d{1,})\s+(\w+\s+\d{1,2}\s+(?:\d{4})?)(\d{1,2}:\d{2})?\s+(.+?)\s?$",
-                                    RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
-                    List<FileDirecoryInfo> Items = RawFTPdata
-                                .Select(s =>
+                }
+                //ResponseProgresBar.Value = 0;
+                RawFTPdata.ToArray();
+                Regex regex = new Regex(@"^([d-])([rwxt-]{3}){3}\s+\d{1,}\s+.*?(\d{1,})\s+(\w+\s+\d{1,2}\s+(?:\d{4})?)(\d{1,2}:\d{2})?\s+(.+?)\s?$",
+                                RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+                List<FileDirecoryInfo> Items = RawFTPdata
+                            .Select(s =>
+                            {
+                                Match match = regex.Match(s);
+                                if (match.Length > 5)
                                 {
-                                    Match match = regex.Match(s);
-                                    if (match.Length > 5)
-                                    {
-                                    // Устанавливаем тип, чтобы отличить файл от папки (используется также для установки рисунка)
-                                    string type = match.Groups[1].Value == "d" ? "DIR.png" : $"{Path.GetExtension(match.Groups[6].Value)}.png"; ;
+                                        // Устанавливаем тип, чтобы отличить файл от папки (используется также для установки рисунка)
+                                        string type = match.Groups[1].Value == "d" ? "Icons/DIR.png" : $"Icons/{Path.GetExtension(match.Groups[6].Value)}.png"; ;
 
-                                    // Размер задаем тольк typeо для файлов, т.к. для папок возвращается
-                                    // размер ярлыка 4кб, а не самой папки
-                                    string size = "";
-                                        if (type == $"{Path.GetExtension(match.Groups[6].Value)}.png")
-                                            size = (Int32.Parse(match.Groups[3].Value.Trim()) / 1024).ToString() + " кБ";
+                                        // Размер задаем тольк typeо для файлов, т.к. для папок возвращается
+                                        // размер ярлыка 4кб, а не самой папки
+                                        string size = "";
+                                    if (type == $"{Path.GetExtension(match.Groups[6].Value)}.png")
+                                        size = (Int32.Parse(match.Groups[3].Value.Trim()) / 1024).ToString() + " кБ";
 
-                                        return new FileDirecoryInfo(size, type, match.Groups[6].Value, match.Groups[4].Value, Addres);
-                                    }
-                                    else return new FileDirecoryInfo();
-                                }).OrderBy(x => x.Type == "DIR.png").ToList();
-                    Items = Items.Where(x => x.Name != "..").ToList();
-                    Items = Items.Where(x => x.Name != ".").ToList();
-                    Items = Items.Where(x => x.Name != "Назад").ToList();
-                   Items = Items.Where(x => x.Name != "file").ToList();
-                   Items = Items.Where(x => x.Name != "avatar").ToList();
-                   Items = Items.Where(x => x.Name != "tphoto").ToList();
-                   Items = Items.Where(x => x.Name != "images").ToList();
-                   Items = Items.Where(x => x.Name != "metod").ToList();
-                   Items = Items.Where(x => x.Name != "ra").ToList();
-                    string PrivateDest;
-                    Message(Items.Count.ToString());
+                                    return new FileDirecoryInfo(size, type, match.Groups[6].Value, match.Groups[4].Value, Addres);
+                                }
+                                else return new FileDirecoryInfo();
+                            }).OrderBy(x => x.Type == "Icons/DIR.png").ToList();
+                Items = Items.Where(x => x.Name != "..").ToList();
+                Items = Items.Where(x => x.Name != ".").ToList();
+                Items = Items.Where(x => x.Name != "Назад").ToList();
+                Items = Items.Where(x => x.Name != "file").ToList();
+                string PrivateDest;
+                Message(Items.Count.ToString() + " Файлов");
+                ResponseProgresBar.Maximum = Items.Count;
+                #endregion
                 List<string> Paths = new List<string>();
+                List<Direcories> Directories = new List<Direcories>();
                 foreach (var item in Items)
                 {
 
-                    if (item.Type != "DIR.png" && item.Name != "Назад")
+                    if (item.Type != "Icons/DIR.png" && item.Name != "Назад")
                     {
-                        await Task.Run(() =>
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                DownloadFiles(DirName + item.Name, destenation + item.Name);
-                            });
-                        });
-                        await Task.Delay(100);
+                        await Dispatcher.Invoke(async () => await DownloadFiles(DirName + item.Name, destenation + item.Name));
                     }
                     else
-                    if (item.Type == "DIR.png" && item.Name != "Назад")
+                    if (item.Type == "Icons/DIR.png" && item.Name != "Назад")
                     {
                         PrivateDest = destenation + item.Name + @"\";
-                        Paths.Add(PrivateDest);
-                        if (!Directory.Exists(PrivateDest))
+                        Directories.Add(new Direcories
                         {
-                            Directory.CreateDirectory(PrivateDest);
-                            new Thread(()=> {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    Download($"{item.adress}{item.Name}/", PrivateDest);
-                                });}).Start();
-                                    
-                        }
-                       
+                            Name = item.Name,
+                            Path = PrivateDest,
+                            Address = item.adress
+                        });
+
+
+                    }
+
+                }
+                foreach (var directory in Directories)
+                {
+                    if (!Directory.Exists(directory.Path))
+                    {
+                        Directory.CreateDirectory(directory.Path);
+                        await Dispatcher.Invoke(async () => await Download($"{directory.Address}{directory.Name}/", directory.Path));
+
                     }
                 }
-               
+
                 Message($"Скачивание в папку {destenation} законченно");
                 LoadAnim.Visibility = Visibility.Collapsed;
                 ResponseProgresBar.Value = 0;
-               
+
             }
-                catch (Exception ex)
-                {
-                    Message(ex.Message);
-                 }
-            finally{
+            //catch (Exception ex)
+            //{
+            //    Message(ex.Message);
+            //}
+            finally
+            {
+                ResponseProgresBar.Value = 0;
                 new ToastContentBuilder()
              .AddArgument("action", "viewConversation")
             .AddArgument("conversationId", 9813)
@@ -950,38 +985,47 @@ namespace ZabgcTool_SDK_.FTP
         .Show();
                 LoadAnim.Visibility = Visibility.Collapsed;
             }
-}
-        public async void DownloadFiles(string source, string dest)
+        }
+        public async Task DownloadFiles(string source, string dest)
         {
-            var request = createRequest(source, WebRequestMethods.Ftp.DownloadFile);
-
-            byte[] buffer = new byte[bufferSize];
-
-            using (var response = (FtpWebResponse)request.GetResponse())
+            await Task.Run(async () =>
             {
-
-                using (var stream = response.GetResponseStream())
+                await Dispatcher.Invoke(async () =>
                 {
-                    using (var fs = new FileStream(dest, FileMode.OpenOrCreate))
+                    var request = createRequest(source, WebRequestMethods.Ftp.DownloadFile);
+
+                    byte[] buffer = new byte[bufferSize];
+
+                    using (var response = (FtpWebResponse)request.GetResponse())
                     {
-                        int readCount = stream.Read(buffer, 0, bufferSize);
 
-                        while (readCount > 0)
+                        using (var stream = response.GetResponseStream())
                         {
-                            if (Hash)
-                                Console.Write("#");
+                            using (var fs = new FileStream(dest, FileMode.OpenOrCreate))
+                            {
+                                int readCount = stream.Read(buffer, 0, bufferSize);
 
-                            await fs.WriteAsync(buffer, 0, readCount);
+                                while (readCount > 0)
+                                {
+                                    if (Hash)
+                                        Console.Write("#");
 
-                            ResponseProgresBar.Maximum = Convert.ToDouble(fs.Length / 1024);
-                            readCount = stream.Read(buffer, 0, bufferSize);
-                            ResponseProgresBar.Value = Convert.ToDouble(fs.Position / 1024);
+                                    await fs.WriteAsync(buffer, 0, readCount);
+
+
+                                    readCount = stream.Read(buffer, 0, bufferSize);
+
+                                }
+                                //ResponseProgresBar.Value = 0;
+                            }
                         }
-                    }
-                }
-                Message($"Файл скачан ({dest}/)");
+                        ResponseProgresBar.Value++;
+                        return $"Файл скачан ({dest}/)";
 
-            }
+                    }
+                });
+            });
+
 
         }
         public async void DownloadForIDE(string source, string dest)
@@ -989,13 +1033,16 @@ namespace ZabgcTool_SDK_.FTP
             var request = createRequest(source, WebRequestMethods.Ftp.DownloadFile);
 
             byte[] buffer = new byte[bufferSize];
-
+            if (!Directory.Exists(dest))
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"/files/");
+            }
             using (var response = (FtpWebResponse)request.GetResponse())
             {
 
                 using (var stream = response.GetResponseStream())
                 {
-                    using (var fs = new FileStream(dest, FileMode.OpenOrCreate,FileAccess.ReadWrite))
+                    using (var fs = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
                         int readCount = stream.Read(buffer, 0, bufferSize);
 
@@ -1006,17 +1053,17 @@ namespace ZabgcTool_SDK_.FTP
 
                             await fs.WriteAsync(buffer, 0, readCount);
                             readCount = stream.Read(buffer, 0, bufferSize);
-                            
+
                         }
-                        
+
                     }
-                    
+
                 }
                 Message($"Файл скачан ({dest}/)");
-                
-                
+
+
             }
-            
+
         }
 
         private void RenameDIR_Button(object sender, RoutedEventArgs e)
@@ -1052,7 +1099,7 @@ namespace ZabgcTool_SDK_.FTP
                     Paths.Add(obj);
                 }
             }
-            FtpUploader(Addres,Paths);
+            FtpUploader(Addres, Paths);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -1063,7 +1110,7 @@ namespace ZabgcTool_SDK_.FTP
             FunctionGrid.Visibility = Visibility.Collapsed;
             List<string> Paths = new List<string>();
             System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            if(folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string[] files = Directory.GetFiles(folderBrowserDialog.SelectedPath);
                 foreach (string obj in files)
@@ -1089,7 +1136,7 @@ namespace ZabgcTool_SDK_.FTP
             }
         }
 
-    
+
         private void CreateBackup_Button(object sender, RoutedEventArgs e)
         {
             HttpWebRequest request;
@@ -1105,5 +1152,56 @@ namespace ZabgcTool_SDK_.FTP
 
             Message(json);
         }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+          
+            if (!Helper.Helper.IsWindowOpen<SearchWindow>())
+            {
+                new SearchWindow(lbx_files, Addres).Show();
+            }
+            FunctionGrid.Visibility = Visibility.Collapsed;
+        }
+
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Button_Click_2(null, null);
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            ASFTP();
+        }
+
+        private void Undo_Click(object sender, RoutedEventArgs e)
+        {
+            string addr = "";
+            string[] splitwords = Addres.Split(new char[] { '/' });
+            for (int inc = 0; inc <= splitwords.Count() - 3; inc++)
+            {
+                addr += $"{splitwords[inc]}/";
+
+           
+            }
+           
+            Addres = addr;
+           
+            if (Addres != "ftp://zabedu.ru/")
+            {
+                ASFTP();
+            }
+        }
+
+        private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+    }
+    class Direcories
+    {
+        public string Path { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+
     }
 }

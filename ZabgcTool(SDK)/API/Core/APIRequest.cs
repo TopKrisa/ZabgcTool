@@ -20,7 +20,7 @@ namespace ZabgcTool_SDK_.APIKeys.Core
         }
 
        public async Task<T> GetDataById(int id)
-        {
+       {
             try
             {
 
@@ -28,9 +28,10 @@ namespace ZabgcTool_SDK_.APIKeys.Core
                 request = (HttpWebRequest)WebRequest.Create(
                  $"{Settings.APIPath}/{Table}/{id}={Key}");
                 request.Method = "GET";
+                
 
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-
+                
                 Stream stream = response.GetResponseStream();
 
                 string json = new StreamReader(stream).ReadToEnd();
@@ -102,7 +103,6 @@ namespace ZabgcTool_SDK_.APIKeys.Core
                     await streamWriter.WriteAsync(Json);
                 }
                 return (HttpWebResponse)httpWebRequest.GetResponse();
-
             }
             catch (Exception)
             {

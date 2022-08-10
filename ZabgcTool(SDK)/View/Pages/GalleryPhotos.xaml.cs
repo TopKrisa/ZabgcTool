@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -21,6 +22,7 @@ namespace ZabgcTool_SDK_.View.Pages
         private List<Model.Data.Photo> Photos;
         private int Id_album;
         private Frame Frame;
+        private string oldName;
         public GalleryPhotos(List<Model.Data.Photo> photo, string Name, Frame frame, int id)
         {
 
@@ -29,6 +31,7 @@ namespace ZabgcTool_SDK_.View.Pages
             Id_album = id;
             Photos = photo;
             Frame = frame;
+            oldName = Name;
             Refresh(lv, Photos);
         }
         private void Refresh(System.Windows.Controls.ListView listView, List<Model.Data.Photo> list)
@@ -52,34 +55,52 @@ namespace ZabgcTool_SDK_.View.Pages
             Functions.IsOpen = false;
             var settings = new Helper.Settings().ReadSettings();
             var Response = await API.DeleteData(Photo.Id);
-            await new FTP.Client(settings.Addres, settings.Login, settings.Password).DeleteFile(Photo.Original);
+            var path = Photo.Original.Split('/');
+        
+        //    await new FTP.Client(settings.Addres, settings.Login, settings.Password).DeleteFile(Photo.Original);
+            Refresh(lv, await API.GetData());
         }
         private async void AddPhoto_Click(object sender, RoutedEventArgs e)
         {
             Functions.IsOpen = false;
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Images |*.jpg;*.jpeg;*.png; ";
+            openFileDialog.Multiselect = true;
+            openFileDialog.Filter = "PNG | *.png; JPG | *.jpg; JPEG | *.jpeg;";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string file = openFileDialog.FileName;
-                string[] path = file.Split('\\');
-                string newPath = string.Empty;
-                string oldpath = path[path.Length - 1];
-                for (int i = 0; i <= path.Length - 2; i++)
+                try
                 {
-                    newPath += path[i] + "\\";
-                }
-                newPath = newPath + $"0-{Environment.TickCount / 451}-{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}{Path.GetExtension(oldpath)}";
-                File.Move(file, newPath);
-                var settings = new Helper.Settings().ReadSettings();
+                    foreach (var file in openFileDialog.FileNames)
+                    {
+                        await Task.Run(async () => {
+                            string[] path = file.Split('\\');
+                            string newPath = string.Empty;
+                            string oldpath = path[path.Length - 1];
+                            for (int i = 0; i <= path.Length - 2; i++)
+                            {
+                                newPath += path[i] + "\\";
+                            }
+                            newPath = newPath + $"0-{Environment.TickCount / 451}-{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}{Path.GetExtension(oldpath)}";
+                            File.Move(file, newPath);
 
-                await new FTP.Client(settings.Addres, settings.Login, settings.Password).UploadFile(newPath, Addres + Path.GetFileName(newPath));
-                System.Windows.MessageBox.Show(Id_album.ToString());
-                var Response = await API.AddData(new Model.Data.Photo() { Id_Album = Id_album, Date = DateTime.Now.ToShortDateString(), Original = $"tphoto/preview/{Path.GetExtension(newPath)}", Format = Path.GetExtension(newPath) });
-               
+                            var settings = new Helper.Settings().ReadSettings();
+
+                            await new FTP.Client(settings.Addres, settings.Login, settings.Password).UploadFile(newPath, Addres + Path.GetFileName(newPath));
+                            await API.AddData(new Model.Data.Photo() { Id_Album = Id_album, Date = DateTime.Now.ToShortDateString(), Size = "150x150", Original = $"/tphoto/preview/{Path.GetFileName(newPath)}", Format = Path.GetExtension(newPath) });
+
+
+                        });
+                        var Photos = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
+                        Refresh(lv, Photos.FirstOrDefault(x => x.Id == Id_album).Photos);
+                    }
+
+                }
+                finally
+                {
+
+                }
             }
-            var Photo = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
-            Refresh(lv, Photo.FirstOrDefault(x => x.Id == Id_album).Photos);
+
         }
         private void OpenImage(string Uri)
         {
@@ -90,35 +111,65 @@ namespace ZabgcTool_SDK_.View.Pages
         {
             Functions.IsOpen = false;
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = true;
+            openFileDialog.Filter = "PNG | *.png; JPG | *.jpg; JPEG | *.jpeg;";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string file = openFileDialog.FileName;
-                string[] path = file.Split('\\');
-                string newPath = string.Empty;
-                string oldpath = path[path.Length - 1];
-                for (int i = 0; i <= path.Length - 2; i++)
+                try
                 {
-                    newPath += path[i] + "\\";
-                }
-                newPath = newPath + $"0-{Environment.TickCount / 451}-{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}{Path.GetExtension(oldpath)}";
-                File.Move(file, newPath);
-                var settings = new Helper.Settings().ReadSettings();
+                    foreach (var file in openFileDialog.FileNames)
+                    {
+                        await Task.Run(async () => {
+                            string[] path = file.Split('\\');
+                            string newPath = string.Empty;
+                            string oldpath = path[path.Length - 1];
+                            for (int i = 0; i <= path.Length - 2; i++)
+                            {
+                                newPath += path[i] + "\\";
+                            }
+                            newPath = newPath + $"0-{Environment.TickCount / 451}-{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}{Path.GetExtension(oldpath)}";
+                            File.Move(file, newPath);
 
-                await new FTP.Client(settings.Addres, settings.Login, settings.Password).UploadFile(newPath, Addres + Path.GetFileName(newPath));
-                //System.Windows.MessageBox.Show($"tphoto/preview/{Path.GetFileName(newPath)}");
-                var Response = await API.AddData(new Model.Data.Photo() { Id_Album = Id_album, Date = DateTime.Now.ToShortDateString(), Original = $"/tphoto/preview/{Path.GetFileName(newPath)}", Format = Path.GetExtension(newPath) });
+                            var settings = new Helper.Settings().ReadSettings();
+
+                            await new FTP.Client(settings.Addres, settings.Login, settings.Password).UploadFile(newPath, Addres + Path.GetFileName(newPath));
+                            await API.AddData(new Model.Data.Photo() { Id_Album = Id_album, Date = DateTime.Now.ToShortDateString(), Size = "150x150", Original = $"/tphoto/preview/{Path.GetFileName(newPath)}", Format = Path.GetExtension(newPath) });
+
+
+                        });
+                        var Photos = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
+                        Refresh(lv, Photos.FirstOrDefault(x => x.Id == Id_album).Photos);
+                    }
+
+                }
+                finally
+                {
+                    
+                }
             }
-            var Photo = await new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin).GetData();
-            Refresh(lv, Photo.FirstOrDefault(x => x.Id == Id_album).Photos);
+            
         }
 
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            APIKeys.Core.APIRequest<Model.Data.Gallery> aPI = new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin);
+            try
+            {
 
-            var Response = aPI.EditData(new Model.Data.Gallery() { Id = Id_album, Name = Logins.Text, Count = "0", Category = "0", Photos = Photos }, Id_album);
+                if (oldName != Logins.Text)
+                {
 
-            Frame.Navigate(new Gallery(Frame));
+                    APIKeys.Core.APIRequest<Model.Data.Gallery> aPI = new APIKeys.Core.APIRequest<Model.Data.Gallery>(APIKeys.Core.DataTableNames.Tables.Gallery, APIKeys.Keys.Api.Admin);
+                     await aPI.EditData(new Model.Data.Gallery() { Id = Id_album, Name = Logins.Text, Count = "0", Category = "0", Photos = Photos }, Id_album); 
+                    
+                    
+                    await Task.Delay(3000);
+                }
+            }
+            finally
+            {
+                Frame.Navigate(new Gallery(Frame));
+               
+            }
         }
     }
 }

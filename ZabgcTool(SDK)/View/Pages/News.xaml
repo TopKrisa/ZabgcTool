@@ -4,11 +4,40 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ZabgcTool_SDK_.View.Pages" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="News">
+      Title="News" Unloaded="Page_Unloaded" >
 
     <Page.Resources>
+        <Style x:Key="TBs" TargetType="TextBox">
+            <Setter Property="Background" Value="#FF11141A"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#FF2D333D"/>
+            <Setter Property="Padding" Value="10 0 0 0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid x:Name="root" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" SnapsToDevicePixels="True">
+                            <Border x:Name="Back" BorderThickness="1" CornerRadius="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"/>
+                            <ScrollViewer x:Name="PART_ContentHost" BorderThickness="0" Padding="{TemplateBinding Padding}" IsTabStop="False" Background="{x:Null}" TextElement.Foreground="{TemplateBinding Foreground}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF383C44"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF1D578C"/>
+                                <Setter Property="Background" Value="#FF0E1116"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <ControlTemplate x:Key="ItemButtons" TargetType="Button">
             <Grid Name="btn" Height="40" Margin="20 0 0 0" >
                 <Border>
@@ -126,6 +155,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        <Image Name="LoadAnim" Grid.Row="1" Visibility="Visible"  Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center"  gif:AnimationBehavior.SourceUri="Load.gif"/>
         <Grid Grid.Row="1"  Visibility="Collapsed" Name="NoNewsData" Background="Transparent"
               Panel.ZIndex="9999" 
              >
@@ -173,7 +203,26 @@
                    VerticalAlignment="Bottom" Foreground="#FF9D9999" FontSize="20" Margin="0 0 0 200" />
         </Grid>
         <Border Grid.Row="0" BorderBrush="#FF303031" BorderThickness="0 0 0 1">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Grid>
+
+                <TextBox Name="Search" TextChanged="Search_TextChanged"  Style="{StaticResource TBs}"  Width="350"  HorizontalAlignment="Left" Margin="15 0 0 0"/>
+                <TextBlock Name="SearchPlaceHolder" Text="Поиск по имени или идентификатору" Margin="28 0 0 0" VerticalAlignment="Center"
+                        IsHitTestVisible="False" FontSize="14"    Foreground="#FF535559">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=Search}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+        </TextBlock>
+       
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+             
                 <Border Name="ButtonBorder" Grid.Row="2" Height="35" BorderThickness="1" Margin="0 0 10 0" Background="#FF00AEFF">
                     <Border.Style>
                         <Style TargetType="{x:Type Border}">
@@ -244,14 +293,15 @@
 
                 </Border>
             </StackPanel>
+            </Grid>
         </Border>
         <Border Grid.Row="1" Name="AcceptBorder"  Panel.ZIndex="999" Visibility="Collapsed" Background="#FF1D222C" BorderBrush="#384244" BorderThickness="1" CornerRadius="4" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid Width="300" Height="200">
                 
                 <TextBlock Text="Название"  Foreground="#FF9D9999" Margin="10 0 0 0"/>
-                <TextBox VerticalAlignment="Top" Margin="10 20 10 0" FontSize="18" Name="NameOfData" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
+                <TextBox VerticalAlignment="Top" Foreground="White" Margin="10 20 10 0" FontSize="18" Name="NameOfData" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
                 <TextBlock Text="Описание"  Foreground="#FF9D9999" Margin="10 50 0 0"/>
-                <TextBox VerticalAlignment="Top" Margin="10 70 10 0" FontSize="18" Name="Descrition" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
+                <TextBox VerticalAlignment="Top" Foreground="White" Margin="10 70 10 0" FontSize="18" Name="Descrition" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
                 <Border Name="Accept" Grid.Row="2" VerticalAlignment="Bottom" Height="35" BorderThickness="1" Margin="10" Background="#FF00AEFF">
                     <Border.Style>
                         <Style TargetType="{x:Type Border}">
@@ -422,7 +472,7 @@
                                                     <Storyboard>
                                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="0 10 0 5"   />
+                                                            To="10 6 10 0"   />
 
                                                     </Storyboard>
                                                 </BeginStoryboard>
@@ -444,8 +494,18 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <Border BorderThickness="1" BorderBrush="#FF303031"  >
+                            <Border BorderThickness="1" BorderBrush="#FF303031" CornerRadius="4" >
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <Trigger Property="Border.IsMouseOver" Value="True">
+                                                <Setter Property="Border.Background" Value="#384244" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
                                 <Grid Margin="5">
+
                                     <Image Source="{Binding Preview}" Width="100" Height="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <StackPanel Orientation="Vertical" Margin="100 0 0 0" VerticalAlignment="Top">
                                         <Label Content="{Binding Name}"  Foreground="WhiteSmoke" FontSize="18"/>

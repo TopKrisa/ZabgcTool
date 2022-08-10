@@ -247,7 +247,7 @@
         </Border>
         <Border Grid.Row="1" Name="AcceptBorder"  Panel.ZIndex="999" BorderBrush="#384244" BorderThickness="1" CornerRadius="4"  Visibility="Collapsed" Background="#FF1D222C" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid Width="300" Height="100">
-                <TextBox VerticalAlignment="Top" Margin="10 20 10 0" FontSize="18" Name="NameNewspaper" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
+                <TextBox VerticalAlignment="Top" Margin="10 20 10 0" FontSize="18" Name="NameNewspaper" Foreground="White" Background="Transparent" BorderBrush="#FF00AEFF" BorderThickness="1"></TextBox>
                 <Border Name="Accept" Grid.Row="2" VerticalAlignment="Bottom" Height="35" BorderThickness="1" Margin="10" Background="#FF00AEFF">
                     <Border.Style>
                         <Style TargetType="{x:Type Border}">
@@ -335,10 +335,10 @@
             </Grid>
         </Border>
         <Grid Grid.Row="1">
-            <ListView Name="Newspaper" ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Background="Transparent"  ItemContainerStyle="{StaticResource LvItemStyle}" BorderThickness="0">
+            <ListView Name="Newspaper" ScrollViewer.CanContentScroll="False" ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Background="Transparent"  ItemContainerStyle="{StaticResource LvItemStyle}" BorderThickness="0">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="20 4 20 0"  Width="980">
+                        <StackPanel Margin="10 4 10 0"  >
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
                                     <Style.Triggers 
@@ -361,7 +361,7 @@
                                                     <Storyboard>
                                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="20 4 20 0"/>
+                                                            To="10 4 10 0"/>
 
                                                     </Storyboard>
                                                 </BeginStoryboard>
@@ -371,8 +371,10 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <Border CornerRadius="2" Background="Transparent" Name="Bord"  BorderThickness="1" BorderBrush="#FF303031" Height="50" VerticalAlignment="Top">
-
+                            <Border CornerRadius="4" Background="Transparent" Name="Bord"  BorderThickness="1" BorderBrush="#FF303031" Height="50" VerticalAlignment="Top">
+                                <Border.Effect>
+                                    <DropShadowEffect x:Name="Shadow1" BlurRadius="20" Opacity="0.4" Color="Black" ShadowDepth="0"/>
+                                </Border.Effect>
                                 <Grid>
                                     <Grid.Style>
                                         <Style TargetType="Grid">

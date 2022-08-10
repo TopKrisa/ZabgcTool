@@ -6,10 +6,18 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       xmlns:local="clr-namespace:ZabgcTool_SDK_.View.Pages"
+      xmlns:local1="clr-namespace:ZabgcTool_SDK_.FTP"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="News" FocusableChanged="Page_FocusableChanged" AllowDrop="True" >
+    <Page.InputBindings>
+        <KeyBinding Gesture="Ctrl+F" Command="local1:SearchCommand.SomeCommand" />
+    </Page.InputBindings>
+    <Page.CommandBindings>
+        <CommandBinding Command="local1:SearchCommand.SomeCommand" Executed="CommandBinding_Executed" />
+    </Page.CommandBindings>
     <Page.Resources>
+        
         <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type ButtonBase}">
             <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
                 <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
@@ -107,9 +115,22 @@
                 </Border>
             </Grid>
         </ControlTemplate>
+        <Style x:Key="ListBoxItemStyle1" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="border" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Page.Resources>
-    <Grid Name="MainGrid">
+    <Grid Name="MainGrid" Background="Transparent" MouseDown="Border_MouseDown">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
@@ -118,38 +139,69 @@
 
         </Grid.RowDefinitions>
         <StackPanel  Orientation="Horizontal" VerticalAlignment="Center" Height="35" Margin="25 0 0 0"  HorizontalAlignment="Left">
-            
-  
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="25 0 0 0"  HorizontalAlignment="Left">
-            <TextBlock Text="URL:" HorizontalAlignment="Left" Foreground="#FF9D9999" Margin="0 0 5 0"/>
-            <Border   BorderThickness="1" Opacity="0.9">
+
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="25 0 0 0"  HorizontalAlignment="Left">
+                <TextBlock Text="URL:" HorizontalAlignment="Left" Foreground="#FF9D9999" Margin="0 0 5 0"/>
+                <Border   BorderThickness="1" Opacity="0.9">
                     <Border.BorderBrush>
                         <LinearGradientBrush>
                             <GradientStop Color="#FF00AEFF" Offset="1"/>
                             <GradientStop Color="Purple" Offset="0"/>
                         </LinearGradientBrush>
                     </Border.BorderBrush>
-                <TextBlock x:Name="TextUri"  HorizontalAlignment="Left" Foreground="#FF9D9999" Width="250" />
-            </Border>
-            
-        </StackPanel>
+                    <TextBlock x:Name="TextUri"  HorizontalAlignment="Left" Foreground="#FF9D9999" Width="250" />
+                </Border>
+
+            </StackPanel>
             <Image Name="LoadAnim" Visibility="Visible" Margin="15 0 0 0" Width="27"  gif:AnimationBehavior.SourceUri="Blocks-1s-200px.gif"/>
         </StackPanel>
         <!-- buttonstyle -->
+        <Button Command="{Binding OpenWindowCommand}" Name="Undo" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="Undo_Click" MouseRightButtonDown="butn_MouseLeftButtonDown"   Width="35" Margin="10 0 0 0" Height="35" HorizontalAlignment="Left"  VerticalAlignment="Top" >
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=Undo, Size=30}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Undo}" Value="true">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button Command="{Binding OpenWindowCommand}" Name="Refresh" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="Refresh_Click" MouseRightButtonDown="butn_MouseLeftButtonDown"   Width="35" Margin="0 0 50 0" Height="35" HorizontalAlignment="Right"  VerticalAlignment="Top" >
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=Refresh, Size=30}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Refresh}" Value="true">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
         <Button Command="{Binding OpenWindowCommand}" Name="butn" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="butn_Click" MouseRightButtonDown="butn_MouseLeftButtonDown"   Width="35" Margin="0 0 15 0" Height="35" HorizontalAlignment="Right"  VerticalAlignment="Top" >
-        <Button.Style>
-            <Style TargetType="Button">
-                <Setter Property="Content" Value="{materialDesign:PackIcon Kind=DotsHorizontal, Size=30}"/>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="BorderBrush" Value="Transparent"/>
-                <Setter Property="Foreground" Value="#FF9D9999"/>
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsMouseOver,ElementName=butn}" Value="true">
-                        <Setter Property="Foreground" Value="White"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-        </Button.Style>
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=DotsHorizontal, Size=30}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=butn}" Value="true">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
         </Button>
 
         <Popup  Name="AminDrag" AllowsTransparency="True"
@@ -165,6 +217,7 @@
                Stroke="WhiteSmoke"
                  Fill="Black"
                StrokeThickness="5"
+                   
                StrokeDashArray="2 1"
                StrokeEndLineCap="Round"
                 AllowDrop="True"
@@ -174,7 +227,7 @@
                />
                 <TextBlock FontSize="28" Foreground="White" Name="TXTPOPUP" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь"/>
             </Grid>
-            
+
         </Popup>
         <Popup Width="150" Height="150" AllowsTransparency="True" IsOpen="False" Placement="MousePoint" Name="Popups">
             <Border Background="Black" Opacity="0.7" BorderThickness="1" BorderBrush="WhiteSmoke">
@@ -187,20 +240,21 @@
                 </StackPanel>
             </Border>
         </Popup >
-        <Grid Name="FunctionGrid" Visibility="Collapsed" Panel.ZIndex="999" Grid.RowSpan="3" Height="120" Width="160" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 35 15 0 ">
+        <Grid Name="FunctionGrid" Visibility="Collapsed" Panel.ZIndex="999" Grid.RowSpan="3" Height="150" Width="160" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 35 15 0 ">
             <Polygon StrokeThickness="1"
                 Stroke="Black"
                 Fill="#FF272e3b"
                      Points="0,0
                      160,0 
-                     160,120
-                     0,120
+                     160,150
+                     0,150
                      "/>
             <StackPanel>
                 <Button Template="{StaticResource TopMenuButtons}" Content="Массовое скачивание" Click="MassDownload"/>
                 <Button Template="{StaticResource TopMenuButtons}" Content="Добавить выгрузку" Click="Button_Click_1"/>
                 <Button Template="{StaticResource TopMenuButtons}" Content="Создать папку" Click="CreateDirectory_Button"/>
                 <Button Template="{StaticResource TopMenuButtons}" Content="Создать Бэкап БД" Click="CreateBackup_Button"/>
+                <Button Template="{StaticResource TopMenuButtons}" Content="Поиск" Click="Button_Click_2"/>
             </StackPanel>
         </Grid>
         <Popup Width="150" Height="120" AllowsTransparency="True" IsOpen="False" Placement="MousePoint" Name="PopupDIR">
@@ -275,27 +329,30 @@
             <Label Content="Нет данных для подключения к FPT-серверу" HorizontalAlignment="Center" 
                    VerticalAlignment="Bottom" Foreground="#FF9D9999" FontSize="20" Margin="0 0 0 100" />
         </Grid>
-        <ListView  Grid.Row="1"
+
+
+        <ListView  Grid.Row="1" IsTabStop="True" ScrollViewer.CanContentScroll="False"
                   BorderThickness="0" Panel.ZIndex="100" Background="Transparent" 
                   ItemsSource="{Binding}" x:Name="lbx_files"  ItemContainerStyle="{StaticResource LvItemStyle}"  >
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="20 4 20 0" MouseRightButtonDown="StackPanel_MouseRightButtonDown"  DragDrop.DragEnter="StackPanel_DragEnter" MouseLeftButtonDown="folder_Click">
+                    <StackPanel Margin="10 4 10 0" MouseRightButtonDown="StackPanel_MouseRightButtonDown"  DragDrop.DragEnter="StackPanel_DragEnter" MouseLeftButtonDown="folder_Click">
+                        
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Style.Triggers 
                                     >
                                     <EventTrigger RoutedEvent="MouseEnter">
-                                    <EventTrigger.Actions>
-                                        <BeginStoryboard >
-                                            <Storyboard>
-                                                <ThicknessAnimation Duration="0:0:0.10" 
+                                        <EventTrigger.Actions>
+                                            <BeginStoryboard >
+                                                <Storyboard>
+                                                    <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
                                                             To="10 6 10 0" />
-                                                   
+                                                     <!--<DoubleAnimation  Duration="0:0:0.10"  Storyboard.TargetProperty="(Effect).Opacity" To="0.2"/>-->
                                                 </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger.Actions>
+                                            </BeginStoryboard>
+                                        </EventTrigger.Actions>
                                     </EventTrigger>
                                     <EventTrigger RoutedEvent="MouseLeave">
                                         <EventTrigger.Actions>
@@ -303,8 +360,8 @@
                                                 <Storyboard>
                                                     <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="20 4 20 0"/>
-                                            
+                                                            To="10 4 10 0"/>
+                                                    <!--<DoubleAnimation  Duration="0:0:0.10"  Storyboard.TargetProperty="(Effect).Opacity" To="1"/>-->
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </EventTrigger.Actions>
@@ -324,16 +381,17 @@
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <Border  x:Name="Bord" BorderThickness="1" BorderBrush="#FF303031"   >
+                        <Border  x:Name="Bord" BorderThickness="1" CornerRadius="4" BorderBrush="#FF303031"  >
+                            
                             <Border.Style>
                                 <Style>
                                     <Style.Triggers>
                                         <Trigger Property="Border.IsMouseOver" Value="True">
                                             <Setter Property="Border.Background" Value="#384244" />
                                         </Trigger>
-                                          
-                                       
-                                       
+
+
+
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
@@ -347,18 +405,18 @@
                                     <Style>
                                         <Style.Triggers>
                                             <EventTrigger RoutedEvent="DragDrop.DragEnter">
-                                            <EventTrigger.Actions>
-                                                <BeginStoryboard >
-                                                    <Storyboard>
-                                                        <ThicknessAnimation Duration="0:0:0.1" 
+                                                <EventTrigger.Actions>
+                                                    <BeginStoryboard >
+                                                        <Storyboard>
+                                                            <ThicknessAnimation Duration="0:0:0.1" 
                                                             Storyboard.TargetProperty="Margin "
                                                             To="10 4 10 0"/>
                                                             <DoubleAnimation Duration="0:0:0.1" 
                                                             Storyboard.TargetProperty="Height" To="60"/>
                                                         </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger.Actions>
-                                        </EventTrigger>
+                                                    </BeginStoryboard>
+                                                </EventTrigger.Actions>
+                                            </EventTrigger>
                                             <EventTrigger RoutedEvent="DragDrop.DragLeave">
                                                 <EventTrigger.Actions>
                                                     <BeginStoryboard >
@@ -395,23 +453,38 @@
             </ListView.ItemTemplate>
 
         </ListView>
+
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0"  BorderThickness="1 2 0 1 " BorderBrush="#FF303031" Background="Black" Opacity="0.4">
-                
-                <ListBox Background="Transparent"  BorderThickness="0" Focusable="False" Name="CommandsList"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDown="Border_MouseDown">
+            <Border Grid.Column="0" CornerRadius="0 0 0 10" BorderThickness="0 2 0 0 " BorderBrush="#FF303031" Background="#11141A" >
+
+                <ListBox Background="Transparent"   BorderThickness="0" Focusable="False" Name="CommandsList"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDown="Border_MouseDown" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" FontSize="12" Foreground="White" Background="Transparent"/>
+                            <Grid Name="btn" Background="Transparent"  Margin="10 3 3 3">
+                                <TextBlock Text="{Binding}"  FontSize="12" Foreground="#FF9D9999" Background="Transparent">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=btn}" Value="True">
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                           
+                          
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Border>
-            <Border  Grid.Column="1" BorderBrush="#FF303031" BorderThickness="0 2 1 1" Background="#11141A" MouseDown="Border_MouseDown">
-               
+            <Border CornerRadius="0 0 10 0" Grid.Column="1" BorderBrush="#FF303031" BorderThickness="0 2 0 0" Background="#11141A" MouseDown="Border_MouseDown">
+
                 <Grid>
                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
                         <TextBlock Text="Тип:" FontSize="14" Foreground="#FF9D9999" Margin="4"/>
@@ -425,12 +498,32 @@
                         <TextBlock Name="Sizedownload" FontSize="14" Foreground="#FF9D9999" Margin="4"/>
 
                     </StackPanel>
-                    <ProgressBar Margin="5" BorderBrush="Transparent" BorderThickness="0"  Grid.Column="1" VerticalAlignment="Bottom" Height="30" Name="ResponseProgresBar" Background="Transparent"  Foreground="#FF00AEFF">
-                        
-                    </ProgressBar>
+
+                    <!--<ProgressBar Margin="5" BorderBrush="Transparent" BorderThickness="0" Grid.Column="1" Value="50" VerticalAlignment="Bottom" Height="30" Name="ResponseProgresBar" Background="Transparent"  Foreground="#FF00AEFF">-->
+
+                    <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Bottom" >
+                        <Grid Margin="0,5">
+                            <Border x:Name="MaskBorder" CornerRadius="5" Background="#11141A" Height="10"/>
+                            <ProgressBar BorderBrush="#FF00AEFF" Name="ResponseProgresBar" BorderThickness="0.001" Background="{x:Null}" >
+                                <ProgressBar.Foreground>
+                                    <LinearGradientBrush>
+                                        <GradientStop Color="#FF00AEFF" Offset="1"/>
+                                        <GradientStop Color="Purple" Offset="0"/>
+                                    </LinearGradientBrush>
+                                </ProgressBar.Foreground>
+                                <ProgressBar.Effect>
+                                    <DropShadowEffect ShadowDepth="0" Color="#FF00AEFF" Opacity="1" BlurRadius="20"/>
+                                </ProgressBar.Effect>
+                                <ProgressBar.OpacityMask>
+                                    <VisualBrush Visual="{Binding ElementName=MaskBorder}"/>
+                                </ProgressBar.OpacityMask>
+                            </ProgressBar>
+                        </Grid>
+                    </StackPanel>
+
                 </Grid>
             </Border>
-         
+
         </Grid>
     </Grid>
 </Page>

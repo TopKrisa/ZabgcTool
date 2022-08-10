@@ -34,18 +34,15 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button Name="Comment" Template="{StaticResource ButtonBaseControlTemplate1}"  Margin="0"  >
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=QuestionAnswer, Size=150}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="#FF9D9999"/>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.Style>
+                <Style>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Comment}" Value="true">
-                            <Setter Property="Foreground" Value="White"/>
-                        </DataTrigger>
-                        <EventTrigger RoutedEvent="MouseEnter">
+                        <EventTrigger RoutedEvent="Grid.MouseEnter">
                             <EventTrigger.Actions>
                                 <BeginStoryboard >
                                     <Storyboard>
@@ -56,7 +53,7 @@
                                 </BeginStoryboard>
                             </EventTrigger.Actions>
                         </EventTrigger>
-                        <EventTrigger RoutedEvent="MouseLeave">
+                        <EventTrigger RoutedEvent="Grid.MouseLeave">
                             <EventTrigger.Actions>
                                 <BeginStoryboard >
                                     <Storyboard>
@@ -68,6 +65,21 @@
                                 </BeginStoryboard>
                             </EventTrigger.Actions>
                         </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+        <Button Name="Comment" Template="{StaticResource ButtonBaseControlTemplate1}"  Margin="0"  >
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=QuestionAnswer, Size=150}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#FF9D9999"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Comment}" Value="true">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                    
                     </Style.Triggers>
                 </Style>
             </Button.Style>
@@ -86,18 +98,12 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-        <Button Name="Question" Template="{StaticResource ButtonBaseControlTemplate1}" Grid.Column="1"  Margin="0"   >
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Content" Value="{materialDesign:PackIcon Kind=UserQuestion, Size=150}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="#FF9D9999"/>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.Style>
+                <Style>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMouseOver,ElementName=Question}" Value="true">
-                            <Setter Property="Foreground" Value="White"/>
-                        </DataTrigger>
-                        <EventTrigger RoutedEvent="MouseEnter">
+                        <EventTrigger RoutedEvent="Grid.MouseEnter">
                             <EventTrigger.Actions>
                                 <BeginStoryboard >
                                     <Storyboard>
@@ -107,9 +113,9 @@
 
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </EventTrigger.Actions>   
+                            </EventTrigger.Actions>
                         </EventTrigger>
-                        <EventTrigger RoutedEvent="MouseLeave">
+                        <EventTrigger RoutedEvent="Grid.MouseLeave">
                             <EventTrigger.Actions>
                                 <BeginStoryboard >
                                     <Storyboard>
@@ -123,10 +129,24 @@
                         </EventTrigger>
                     </Style.Triggers>
                 </Style>
-            </Button.Style>
-        </Button>
-       
-        <TextBlock Text="Вопросы" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 160 38 0">
+            </Grid.Style>
+            <Button Name="Question" Template="{StaticResource ButtonBaseControlTemplate1}" Grid.Column="1"  Margin="0"   >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Content" Value="{materialDesign:PackIcon Kind=UserQuestion, Size=150}"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#FF9D9999"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMouseOver,ElementName=Question}" Value="true">
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                         
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <TextBlock Text="Вопросы" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 160 38 0">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
 
@@ -140,5 +160,8 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+        </Grid>
+        <Border Panel.ZIndex="9699" Grid.ColumnSpan="2" Background="#0F1116" CornerRadius="0 0 10 10" Grid.Row="1" BorderThickness="0 1 0 1" BorderBrush="#FF303031" >
+        </Border>
     </Grid>
 </Page>

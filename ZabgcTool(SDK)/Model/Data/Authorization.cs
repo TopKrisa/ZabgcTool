@@ -11,7 +11,8 @@ namespace ZabgcTool_SDK_.Model
         public string LoginName;
         [JsonProperty("Password")]
         public string Password;
-
+        [JsonProperty("Type")]
+        public int Type;
         public Authorization(string login, string password)
         {
             LoginName = login;
@@ -21,22 +22,27 @@ namespace ZabgcTool_SDK_.Model
         {
 
         }
-        public bool Login()
+        public (bool,int) Login()
         {
             var users = GetUsers();
             bool IsLogin = false;
+            int type=99999;
             foreach(var user in users)
             {
+
                 if(user.LoginName == LoginName && user.Password == Password)
                 {
                     IsLogin = true;
+                    type = user.Type;
+                    break;
                 }
                 else
                 {
                     IsLogin = false;
+                    type = user.Type;
                 }
             }
-            return IsLogin;
+            return (IsLogin,type);
         }
         public bool CheckUserUserWithThisName(string Name)
         {
@@ -46,13 +52,19 @@ namespace ZabgcTool_SDK_.Model
         {
             HttpWebRequest request;
             request = (HttpWebRequest)WebRequest.Create(
-             $"http://zabgc.ru/api/users/={new APIKeys.Keys(APIKeys.Keys.Api.Admin).Key}");
+             $"https://zabgc.zabedu.ru/api/users/={new APIKeys.Keys(APIKeys.Keys.Api.Admin).Key}");
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream stream = response.GetResponseStream();
             StreamReader streamReader = new StreamReader(stream);
             string json = streamReader.ReadToEnd();
 
             return JsonConvert.DeserializeObject<List<Authorization>>(json);
+        }
+        public enum UserTypes
+        {
+            Admin =0,
+            ScheduleAdmin = 1,
+
         }
     }
 }

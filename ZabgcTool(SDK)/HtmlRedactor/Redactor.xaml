@@ -263,7 +263,7 @@
         </Grid>
         <WpfHtmlEditor:WpfHtmlEditor x:Name="WpfHtmlEditor" Grid.Row="1" ContextMenuShowing="WpfHtmlEditor_OnContextMenuShowing"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal"  Background="#1E1E1E">
-            <Button Template="{StaticResource TopMenuButtons}" FontSize="20" Content="Preview image"/>
+        
             <Button Template="{StaticResource TopMenuButtons}" FontSize="20" Content="Name" Name="NameData"/>
             <Button Template="{StaticResource TopMenuButtons}" FontSize="20" Content="Save" Name="Save"/>
         </StackPanel>

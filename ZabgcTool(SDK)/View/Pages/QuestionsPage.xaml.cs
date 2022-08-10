@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -24,9 +25,21 @@ namespace ZabgcTool_SDK_.View.Pages
             text.Text = "Вопросы";
             Loaded += async (s, e) =>
                 {
-                    List<Qusestions> qusestions = await API.GetData();
-                
+                    try
+                    {
+                    List<Qusestions> qusestions = new List<Qusestions>();
+                        await Task.Run(async () => { 
+                            qusestions = await API.GetData();
+                        });
+
                        QuestionList.DataContext = qusestions;
+                    }
+                    finally
+                    {
+                        LoadAnim.Visibility = Visibility.Collapsed;
+                    }
+                    
+                
                    
                     
                 }; 
@@ -46,9 +59,13 @@ namespace ZabgcTool_SDK_.View.Pages
 
         private async void DeleteQuestion_Click(object sender, RoutedEventArgs e)
         {
+            List<Qusestions> qusestions = new List<Qusestions>();
             var Qusestions = (Qusestions)(sender as Button).DataContext;
-           string ret = await API.DeleteData(Qusestions.Id);
-            QuestionList.DataContext = await API.GetData();
+            await Task.Run(async () => await API.DeleteData(Qusestions.Id));
+            await Task.Run(async () => {
+                qusestions = await API.GetData();
+            });
+            QuestionList.DataContext = qusestions;
         }
 
         private async void PublishQuestion_Click(object sender, RoutedEventArgs e)
@@ -63,12 +80,16 @@ namespace ZabgcTool_SDK_.View.Pages
 
         private async void DeleteCoupleQuestions_Click(object sender, RoutedEventArgs e)
         {
-            foreach(int item in Selected)
+            List<Qusestions> qusestions = new List<Qusestions>();
+            foreach (int item in Selected)
             {
-                string ret = await API.DeleteData(item);
+                await Task.Run(async () => await API.DeleteData(item));
             }
             Selected.Clear();
-            QuestionList.DataContext= await API.GetData();
+            await Task.Run(async () => {
+                qusestions = await API.GetData();
+            });
+            QuestionList.DataContext = qusestions;
             DeleteCoupleQuestions.Visibility = Visibility.Collapsed;
         }
 

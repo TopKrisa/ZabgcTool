@@ -52,13 +52,31 @@ namespace ZabgcTool_SDK_.View.Pages
             System.Diagnostics.Process.Start($"https://zabgc.zabedu.ru/{@internal.Url}");
         }
 
-        private async void Delete_Click(object sender, RoutedEventArgs e)
+        private  void Delete_Click(object sender, RoutedEventArgs e)
         {
-            var settings = new Helper.Settings().ReadSettings();
-            var Internal = (Model.Data.InternalSchedule)(sender as System.Windows.Controls.Button).DataContext;
-            await new FTP.Client(settings.Addres, settings.Login, settings.Password).DeleteFile(Internal.Url);
-            await new APIKeys.Core.APIRequest<Model.Data.InternalSchedule>(APIKeys.Core.DataTableNames.Tables.Distant, APIKeys.Keys.Api.Admin).DeleteData(Internal.Id);
+            try
+            {
+            if (!Helper.Helper.IsWindowOpen<DeleteDialog>())
+            {
+                        var Internal = (Model.Data.InternalSchedule)(sender as Button).DataContext;
+                new DeleteDialog(async () => {
+                    await Dispatcher.Invoke(async () =>
+                    {
+                        var settings = new Helper.Settings().ReadSettings();
+                        //  await new FTP.Client(settings.Addres, settings.Login, settings.Password).DeleteFile(Internal.Url);
+                        await new APIKeys.Core.APIRequest<Model.Data.InternalSchedule>(APIKeys.Core.DataTableNames.Tables.Distant, APIKeys.Keys.Api.Admin).DeleteData(Internal.Id);
+                        LoadData(Schedule);
+                    });
+                   
+                }).Show();
+            }
+
+            }
+            finally
+            {
+
             LoadData(Schedule);
+            }
         }
 
         private async void SaveSchedule_Click(object sender, RoutedEventArgs e)

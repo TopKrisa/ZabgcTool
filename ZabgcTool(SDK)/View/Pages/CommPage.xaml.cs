@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ZabgcTool_SDK_.Model;
-using ZabgcTool_SDK_.APIKeys.Core;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using ZabgcTool_SDK_.APIKeys.Core;
+using ZabgcTool_SDK_.Model;
 
 namespace ZabgcTool_SDK_.View.Pages
 {
@@ -26,44 +18,58 @@ namespace ZabgcTool_SDK_.View.Pages
         private APIRequest<Comments> API = new APIRequest<Comments>(DataTableNames.Tables.Comment, APIKeys.Keys.Api.Admin);
         private List<int> Selected = new List<int>();
         public CommPage(TextBlock text)
-        { 
-
+        {
             InitializeComponent();
             text.Visibility = Visibility.Visible;
             text.Text = "Комментарии";
-            Loaded += async (s, e) => 
+
+            Loaded += async (s, e) =>
             {
-                CommentsList.DataContext = await API.GetData();
+                try
+                {
+                    List<Comments> comments = new List<Comments>();
+                    await Task.Run(async () =>
+                    {
+                        comments = await API.GetData();
+                    });
+                    CommentsList.DataContext = comments;
+                }
+                finally
+                {
+                    LoadAnim.Visibility = Visibility.Collapsed;
+                }
             };
-            
-            
+
+
         }
 
         private async void PublishComment_Click(object sender, RoutedEventArgs e)
         {
             Comments comments = (Comments)(sender as Button).DataContext;
-
-            var WindowComments = new CommentEdit(comments.Name, comments.Message, comments.Otvet, comments.Id);
-            if(!WindowComments.IsActive)
-            {
-                WindowComments.ShowDialog();
-            }
+            await new APIKeys.Core.APIRequest<Comments>
+                (APIKeys.Core.DataTableNames.Tables.Comment, APIKeys.Keys.Api.Admin)
+                  .EditData(new Comments(comments.Id, comments.Message,
+                     comments.Answer, comments.Name), comments.Id);
             CommentsList.DataContext = await API.GetData();
         }
 
         private async void DeleteComment_Click(object sender, RoutedEventArgs e)
         {
-            Comments comments = (Comments)(sender as Button).DataContext;
-
-            await API.DeleteData(comments.Id);
-            CommentsList.DataContext = await API.GetData();
+            List<Comments> comments = new List<Comments>();
+            Comments comment = (Comments)(sender as Button).DataContext;
+            await Task.Run(async () =>
+            {
+                await API.DeleteData(comment.Id);
+                comments = await API.GetData();
+            });
+            CommentsList.DataContext = comments;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             Comments comments = (Comments)(sender as Grid).DataContext;
             var comment = sender as Grid;
-            if(comments.Activate == 0)
+            if (comments.Activate == 0)
             {
                 comment.Background = Brushes.DarkRed;
             }
@@ -72,12 +78,21 @@ namespace ZabgcTool_SDK_.View.Pages
 
         private async void DeleteCoupleQuestions_Click(object sender, RoutedEventArgs e)
         {
+            List<Comments> comments = new List<Comments>();
             foreach (int item in Selected)
             {
-                string ret = await API.DeleteData(item);
+                await Task.Run(async () =>
+                {
+                    await API.DeleteData(item);
+
+                });
             }
             Selected.Clear();
-            CommentsList.DataContext = await API.GetData();
+            await Task.Run(async () =>
+            {
+                comments = await API.GetData();
+            });
+            CommentsList.DataContext = comments;
             DeleteCoupleQuestions.Visibility = Visibility.Collapsed;
 
         }
@@ -103,6 +118,11 @@ namespace ZabgcTool_SDK_.View.Pages
             {
                 DeleteCoupleQuestions.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

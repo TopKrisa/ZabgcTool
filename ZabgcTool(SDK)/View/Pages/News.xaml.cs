@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -11,9 +13,10 @@ namespace ZabgcTool_SDK_.View.Pages
     /// <summary>
     /// Логика взаимодействия для News.xaml
     /// </summary>
-    public partial class News : Page
+    public partial class News : Page, IDisposable
     {
         APIKeys.Core.APIRequest<Model.Data.News> API = new APIKeys.Core.APIRequest<Model.Data.News>(APIKeys.Core.DataTableNames.Tables.News, APIKeys.Keys.Api.Admin);
+        private List<Model.Data.News> _news;
         public News()
         {
             InitializeComponent();
@@ -21,38 +24,55 @@ namespace ZabgcTool_SDK_.View.Pages
             {
                 LoadedData();
             };
+            
         }
-        
+
         private async void LoadedData()
         {
-            List<Model.Data.News> news = await API.GetData();
-         
-            if(news.Count == 0)
+            try
             {
-                NoNewsData.Visibility = Visibility.Collapsed;
+                Search.IsEnabled = false;
+                List<Model.Data.News> news = new List<Model.Data.News>();
+                await Task.Run(async () => { _news = news = await API.GetData(); });
+
+                if (news.Count == 0)
+                {
+                    NoNewsData.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                   
+                    
+                    NewsList.DataContext = news;
+                    NoNewsData.Visibility = Visibility.Collapsed;
+                }
             }
-            else
+            finally
             {
-            NewsList.DataContext = news;
-                NoNewsData.Visibility = Visibility.Collapsed;
+                LoadAnim.Visibility = Visibility.Collapsed;
+                Search.IsEnabled = true;
             }
+
         }
         private void OpenNews_Click(object sender, RoutedEventArgs e)
         {
             Model.Data.News news = (Model.Data.News)(sender as System.Windows.Controls.Button).DataContext;
-
             System.Diagnostics.Process.Start($"http://zabgc.zabedu.ru/news.php?id={news.Id}");
 
 
         }
         private Model.Data.News New;
         private bool CheckAdd;
+        private System.Windows.Controls.Button _deleteButton;
+        private System.Windows.Controls.Button _editButton;
         private void EditNews_Click(object sender, RoutedEventArgs e)
         {
+           
             New = (Model.Data.News)(sender as System.Windows.Controls.Button).DataContext;
             NameOfData.Text = New.Name;
             Descrition.Text = New.Description;
-            var Editor = new HtmlRedactor.EditRedactor(New.Message);
+            var Editor = new HtmlRedactor.EditRedactor(New.Message,async ()=> { 
+            });
             Editor.Show();
             Editor.Closing += async (s, es) =>
             {
@@ -61,11 +81,18 @@ namespace ZabgcTool_SDK_.View.Pages
             };
         }
 
-        private async void DeleteNews_Click(object sender, RoutedEventArgs e)
+        private void DeleteNews_Click(object sender, RoutedEventArgs e)
         {
-            Model.Data.News news = (Model.Data.News)(sender as System.Windows.Controls.Button).DataContext;
-            await API.DeleteData(news.Id);
-            LoadedData();
+         
+            if (!Helper.Helper.IsWindowOpen<DeleteDialog>())
+            {
+                new DeleteDialog(async () =>
+                {
+                    Model.Data.News news = (Model.Data.News)(sender as System.Windows.Controls.Button).DataContext;
+                    await API.DeleteData(news.Id);
+                    LoadedData();
+                }).Show();
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -78,7 +105,23 @@ namespace ZabgcTool_SDK_.View.Pages
                 CheckAdd = true;
             };
         }
-
+        private bool _disposed = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    this.Dispose();
+                }
+            }
+            _disposed = true;
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
         private async void AccBtn_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(NameOfData.Text) && !string.IsNullOrWhiteSpace(Descrition.Text))
@@ -100,23 +143,48 @@ namespace ZabgcTool_SDK_.View.Pages
                 }
                 else
                 {
-                    await new APIKeys.Core.APIRequest<Model.Data.News>(APIKeys.Core.DataTableNames.Tables.News, APIKeys.Keys.Api.Admin).AddData(new Model.Data.News() { Name = NameOfData.Text, Description = Descrition.Text, Poster = PathPreview, Message = HtmlRedactor.Saver.Text });
+
+                    if (string.IsNullOrWhiteSpace(PathPreview))
+                    {
+                        await new APIKeys.Core.APIRequest<Model.Data.News>(APIKeys.Core.DataTableNames.Tables.News,
+                            APIKeys.Keys.Api.Admin).AddData(new Model.Data.News()
+                            {
+                                Name = NameOfData.Text,
+                                Description = Descrition.Text,
+                                Poster = "http://nadzor.e-dag.ru/images/no-image.png",
+                                Message = HtmlRedactor.Saver.Text
+                            });
+                    }
+                    else
+                    {
+                        await new APIKeys.Core.APIRequest<Model.Data.News>(APIKeys.Core.DataTableNames.Tables.News,
+                            APIKeys.Keys.Api.Admin).AddData(new Model.Data.News()
+                            {
+                                Name = NameOfData.Text,
+                                Description = Descrition.Text,
+                                Poster = PathPreview,
+                                Message = HtmlRedactor.Saver.Text
+                            });
+
+                    }
+
                     AcceptBorder.Visibility = Visibility.Collapsed;
 
                 }
                 LoadedData();
             }
         }
-       
+
         private string PathPreview;
         private async void Preview_Click(object sender, RoutedEventArgs e)
         {
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Images | *.png; *.jpg; *.jpeg; *gfif; ";
             var settings = new Helper.Settings().ReadSettings();
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                PathPreview = @"/file/"+$"{Environment.TickCount}-{DateTime.Now.Day}-{DateTime.Now.Month}-{DateTime.Now.Year}{Path.GetExtension(openFileDialog.FileName)}";
+                PathPreview = @"/file/" + $"{Environment.TickCount}-{DateTime.Now.Day}-{DateTime.Now.Month}-{DateTime.Now.Year}{Path.GetExtension(openFileDialog.FileName)}";
                 await new FTP.Client(settings.Addres, settings.Login, settings.Password).UploadFile(openFileDialog.FileName, PathPreview);
                 AcceptBorder.Visibility = Visibility.Visible;
             }
@@ -124,7 +192,18 @@ namespace ZabgcTool_SDK_.View.Pages
 
         private void butn_Click(object sender, RoutedEventArgs e)
         {
+
             AcceptBorder.Visibility = Visibility.Collapsed;
+        }
+
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            NewsList.DataContext = _news.Where(x => x.Name.ToLower().Contains(Search.Text.ToLower()) || x.Id.ToString() == Search.Text);
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        { 
+            Dispose(_disposed);
         }
     }
 }

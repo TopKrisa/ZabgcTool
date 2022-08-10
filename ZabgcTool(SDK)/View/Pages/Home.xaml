@@ -41,7 +41,14 @@
         </ControlTemplate>
     </Page.Resources>
     <Grid Background="Transparent">
-        <Border VerticalAlignment="Top" HorizontalAlignment="Left" Background="#6e6e6e" Margin="100 20 20 20 "  Height="300" Width="400" BorderThickness="2" CornerRadius="8" BorderBrush="#0F1116" >
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border VerticalAlignment="Top" HorizontalAlignment="Left" Background="#2b3241" Margin="100 20 20 20 "  Height="300" Width="400"  CornerRadius="2" BorderBrush="#0F1116" >
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" Opacity="1" ShadowDepth="1"/>
+            </Border.Effect>
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
@@ -51,7 +58,8 @@
                                     <Storyboard>
                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="100 30 20 20"  />
+                                                            To="100 22 20 20"  />
+                                        <DoubleAnimation  Duration="0:0:0.10"  Storyboard.TargetProperty="(Effect).Opacity" To="0.2"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger.Actions>
@@ -63,7 +71,7 @@
                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
                                                             To="100 20 20 20"/>
-
+                                        <DoubleAnimation  Duration="0:0:0.10"  Storyboard.TargetProperty="(Effect).Opacity" To="1"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger.Actions>
@@ -71,14 +79,14 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            
+
             <Grid >
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top"  Margin="0 0 0 0">
 
                     <TextBlock Text="ZABGC " FontSize="23" VerticalAlignment="Bottom"  Foreground="#6DB2C0">
                         <TextBlock.Effect>
                             <BlurEffect Radius="1">
-                                
+
                             </BlurEffect>
                         </TextBlock.Effect>
                     </TextBlock>
@@ -100,9 +108,9 @@
                 </StackPanel>
                 <StackPanel Width="100" HorizontalAlignment="Right" Margin="10 30 0 0">
                     <Label Template="{StaticResource ResourceKey=Label}" Name="Login" >
-                    ...
+                        ...
                     </Label>
-                  
+
                     <Label Template="{StaticResource ResourceKey=Label}" Name="Materials">
                         ...
                     </Label>
@@ -117,10 +125,13 @@
                     </Label>
                 </StackPanel>
 
-                <Image  Visibility="Visible" Name="LoadingAnim1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" Width="50" Height="50"  gif:AnimationBehavior.SourceUri="Apiloading.gif"/>
+                <Image  Visibility="Visible" Name="LoadingAnim1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 5" Width="50" Height="50"  gif:AnimationBehavior.SourceUri="Apiloading.gif"/>
             </Grid>
         </Border>
-        <Border VerticalAlignment="Top" HorizontalAlignment="Right" Background="#6e6e6e" Margin="20 20 100 20"  Height="300" Width="400" BorderThickness="2" CornerRadius="8" BorderBrush="#0F1116" >
+        <Border VerticalAlignment="Top" HorizontalAlignment="Right" Background="#2b3241" Margin="20 20 100 20"  Height="300" Width="400"   CornerRadius="2" BorderBrush="#0F1116" >
+            <Border.Effect>
+                <DropShadowEffect x:Name="Shadow1" BlurRadius="30" Opacity="1" ShadowDepth="1"/>
+            </Border.Effect>
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
@@ -130,21 +141,23 @@
                                     <Storyboard>
                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="20 30 100 20"  />
+                                                            To="20 22 100 20"  />
+                                        <DoubleAnimation  Duration="0:0:0.10"  Storyboard.TargetProperty="(Effect).Opacity" To="0.2"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger.Actions>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="MouseLeave">
-                            
+
                             <EventTrigger.Actions>
-                                
+
                                 <BeginStoryboard >
                                     <Storyboard>
                                         <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
                                                             To="20 20 100 20"/>
-                                                
+                                        <DoubleAnimation  Duration="0:0:0.10"  Storyboard.TargetProperty="(Effect).Opacity" To="1"/>
+
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger.Actions>
@@ -152,39 +165,45 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            
+
             <Grid>
-                
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top"  Margin="0 0 0 0">
-                   
+
                     <TextBlock Text="Я" FontSize="23" VerticalAlignment="Bottom"  Foreground="Red"/>
                     <TextBlock Text="ндекс.Метрика" VerticalAlignment="Bottom"  Foreground="WhiteSmoke" FontSize="23"/>
                 </StackPanel>
-                <StackPanel Margin="0 40 0 0" Width="250" HorizontalAlignment="Left">
+                <StackPanel Margin="0 30 0 0" Width="250" HorizontalAlignment="Left">
                     <Label Template="{StaticResource ResourceKey=Label}" Content="Отказы:" />
                     <Label Template="{StaticResource ResourceKey=Label}" Content="Время на сайте:" />
                     <Label Template="{StaticResource ResourceKey=Label}" Content="Глубина просмотра:" />
                     <Label Template="{StaticResource ResourceKey=Label}" Content="Посетителей:" />
                 </StackPanel>
-                <StackPanel Margin="0 40 0 0" HorizontalAlignment="Right">
+                <StackPanel Margin="0 30 0 0" HorizontalAlignment="Right">
                     <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="Denided"/>
                     <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="TimeOnSite" />
                     <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="PageDepth"/>
                     <Label Template="{StaticResource ResourceKey=Label}" Content="..." Name="Clients"/>
                 </StackPanel>
-                <Image  Visibility="Visible" Name="LoadingAnim2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" Width="50" Height="50"  gif:AnimationBehavior.SourceUri="Apiloading.gif"/>
+                <Image  Visibility="Visible" Name="LoadingAnim2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 5" Width="50" Height="50"  gif:AnimationBehavior.SourceUri="Apiloading.gif"/>
             </Grid>
         </Border>
-        <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom">
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1">
             <Button Name="ScheduleUpload" Template="{StaticResource ButtonBaseControlTemplate1}" HorizontalAlignment="Center"  Click="ScheduleUpload_Click" VerticalAlignment="Center" Margin="20"   >
                 <Button.ToolTip>
-                    <ToolTip  Background="#FF9D9999" BorderBrush="#0F1116" Foreground="Black"  >
-                        
-                            Добавить Расписание 2.0
-                        
+                    <ToolTip  Background="#2b3241" BorderThickness="0"  Foreground="White"  >
+                        <ToolTip.Effect>
+                            <DropShadowEffect  BlurRadius="30" Opacity="1" ShadowDepth="1"/>
+                        </ToolTip.Effect>
+                        Добавить Расписание 2.0
+
                     </ToolTip>
                 </Button.ToolTip>
+                <Button.Effect>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0" Color="White"></DropShadowEffect>
+                </Button.Effect>
                 <Button.Style>
+                   
                     <Style TargetType="Button">
                         <Setter Property="Content" Value="{materialDesign:PackIcon Kind=ProgressUpload, Size=50}" />
                         <Setter Property="Background" Value="Transparent"/>
@@ -200,8 +219,8 @@
                                         <Storyboard>
                                             <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="25 25 15 15" />
-
+                                                            To="22 22 18 18" />
+                                            <DoubleAnimation  Duration="0:0:0.10" Storyboard.TargetProperty="(Effect).Opacity" To="1"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger.Actions>
@@ -213,6 +232,7 @@
                                             <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
                                                             To="20"/>
+                                            <DoubleAnimation  Duration="0:0:0.10" Storyboard.TargetProperty="(Effect).Opacity" To="0"/>
 
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -222,9 +242,49 @@
                     </Style>
                 </Button.Style>
             </Button>
-          
+
         </Grid>
-   
+        <!--/////////////////////////////////////////-->
+        <Grid Grid.Row="1">
+            <Grid>
+                <TextBlock Foreground="#FF9D9999" FontWeight="Bold" FontSize="120" HorizontalAlignment="Center" Margin="0 0 0 150" VerticalAlignment="Center">
+                    <!--<TextBlock.Effect>
+                        <DropShadowEffect BlurRadius="60" ShadowDepth="0" Opacity="0" Color="White"></DropShadowEffect>
+                    </TextBlock.Effect>-->
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <EventTrigger.Actions>
+                                        <BeginStoryboard >
+                                            <Storyboard>
+                                                <!--<DoubleAnimation  Duration="0:0:1.30"  Storyboard.TargetProperty="(Effect).Opacity" AccelerationRatio="1" To="1"/>-->
+                                                <!--<DoubleAnimation  Duration="0:0:0.30"  Storyboard.TargetProperty="(Effect).Opacity" AccelerationRatio="1" To="0.1"/>-->
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger.Actions>
+                                </EventTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                ZABGC
+                </TextBlock>
+            </Grid>
+<!--/////////////////////////////////-->
+            <TextBlock Foreground="#FF9D9999" FontWeight="Bold" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="310 0 0 0">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="0" Opacity="0.2" Color="White"></DropShadowEffect>
+                </TextBlock.Effect>
+               
+               Tools
+            </TextBlock>
+            <Polygon HorizontalAlignment="Center" VerticalAlignment="Top" Stroke="#FF555860" Points="0 0 800 0" Margin="0 0 0 0">
+                <Polygon.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="1" ShadowDepth="2" />
+                </Polygon.Effect>
+            </Polygon>
+        </Grid>
+
     </Grid>
-       
+
 </Page>

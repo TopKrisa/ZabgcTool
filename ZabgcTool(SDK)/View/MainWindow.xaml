@@ -7,7 +7,8 @@
         xmlns:tb="http://www.hardcodet.net/taskbar"
          xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Zabgc Tools" Height="800" Width="1250" WindowStartupLocation="CenterScreen" Background="#FF1D222C" WindowStyle="None" ResizeMode="NoResize">
+        Title="Zabgc Tools" Height="800" Width="1250" WindowStartupLocation="CenterScreen" BorderThickness="0" Background="Transparent" AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize"
+        >
     <Window.Resources>
         <Style x:Key="LvItemStyle" TargetType="ListViewItem">
             <Setter Property="Template">
@@ -147,6 +148,7 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
     </Window.Resources>
+    <Border CornerRadius="10" BorderThickness="0" Background="#FF1D222C">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220"/>
@@ -175,18 +177,18 @@
             </tb:TaskbarIcon.TrayPopup>-->
         </tb:TaskbarIcon>
         <Grid Name="TopMenu" Grid.Row="0"  Grid.ColumnSpan="2" Background="Transparent" Width="1250">
-            <Border BorderThickness="1" BorderBrush="#FF303031" Background="Transparent">
+            <Border BorderThickness="0 0 0 1" BorderBrush="#FF303031" Background="Transparent">
                 <Grid>
                     <StackPanel Orientation="Horizontal" MouseEnter="StackPanel_MouseEnter" Background="Transparent" MouseDown="StackPanel_MouseDown" >
                         <Button Name="Control" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="Панель управления"/>
                        
-                        <Button Name="FTP" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="FTP"/>
+                        <Button Name="FTP"  Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="FTP"/>
                         <Button Name="Authomatic" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="OSS/RDP"/>
                         <Button Name="Discous" Template="{StaticResource ResourceKey=TopMenuButtons}" FontSize="23" Content="Обсуждения"/>
                     </StackPanel>
                    
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 0 0 40">
-                        <Button Name="Settings" Template="{DynamicResource ButtonBaseControlTemplate1}"  Width="35" >
+                        <Button Name="Settings" Template="{DynamicResource ButtonBaseControlTemplate1}" HorizontalAlignment="Right"  Width="35" >
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Margin" Value="0 5 0 0"/>
@@ -266,10 +268,12 @@
            
         </Grid>
 
-        <Grid Panel.ZIndex="999"
+          
+                
+        <Grid Panel.ZIndex="9999"
               Visibility="Collapsed"
               Name="NotifyPopup"
-              Grid.RowSpan="2" 
+                Grid.RowSpan="2"
               VerticalAlignment="Top"
               Margin="0 35 36 0"
               HorizontalAlignment="Right" 
@@ -277,6 +281,9 @@
               Width="400"
               Grid.ColumnSpan="2" 
               Background="#FF272e3b">
+                <Grid.Effect>
+                    <DropShadowEffect BlurRadius="30" Opacity="1" ShadowDepth="1"/>
+                </Grid.Effect>
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition/>
@@ -284,7 +291,8 @@
             <Polygon Grid.Row="1"
                 StrokeThickness="1"
                 Stroke="#FF303031"
-                Fill="#FF272e3b"
+                Fill="Black"
+                     Opacity="0.2"
                 Points="
                 0,0
                 0,280
@@ -294,7 +302,7 @@
             <Polygon Grid.Row="0"
                 StrokeThickness="1"
                 Stroke="Black"
-                Fill="White"
+                Fill="Black"
                      Opacity="0.1"
                 Points="
                 0,0
@@ -350,8 +358,10 @@
 
             </ListView>
         </Grid>
+          
        
         <Frame Name="MainWindowFrame" NavigationUIVisibility="Hidden" Grid.ColumnSpan="2" Grid.Row="1"/>
 
     </Grid>
+    </Border>
 </Window>

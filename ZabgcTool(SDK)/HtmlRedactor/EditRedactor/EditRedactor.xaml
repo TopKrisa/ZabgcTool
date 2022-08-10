@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ZabgcTool_SDK_.HtmlRedactor" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
         xmlns:WpfHtmlEditor="clr-namespace:SpiceLogic.WpfHtmlEditor;assembly=SpiceLogicWPFHtmlEditor"
         mc:Ignorable="d"
-        Title="Redactor" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" WindowState="Maximized">
+        Title="Redactor" Height="450" Width="800" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" WindowStyle="None" WindowState="Maximized">
     <Window.Resources>
         <ControlTemplate x:Key="ButtonBaseControlTemplate1" TargetType="{x:Type ButtonBase}">
             <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
@@ -263,12 +263,11 @@
         </Grid>
         <WpfHtmlEditor:WpfHtmlEditor x:Name="WpfHtmlEditor" Grid.Row="1" ContextMenuShowing="WpfHtmlEditor_OnContextMenuShowing"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal"  Background="#1E1E1E">
-            <Button Template="{StaticResource TopMenuButtons}" FontSize="20" Content="Preview image"/>
-            <Button Template="{StaticResource TopMenuButtons}" FontSize="20" Content="Name" Name="NameData"/>
+          
             <Button Template="{StaticResource TopMenuButtons}" FontSize="20" Content="Save" Name="Edit" />
         </StackPanel>
         <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" Grid.Row="0" Background="#1E1E1E">
-            <TextBlock Text="Editor" Foreground="#FF9D9999" FontSize="20" VerticalAlignment="Center" Margin="15 0 0 0" />
+            <TextBlock Text="Editor" Foreground="#FF9D9999" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15 0 0 0" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Name="butns" Template="{DynamicResource ButtonBaseControlTemplate1}" Click="butns_Click" Width="35" >
                     <Button.Style>

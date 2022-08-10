@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ZabgcTool_SDK_.View"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Авторизация" Height="420" Width="365" WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Авторизация" Height="420" Width="365" WindowStyle="None" AllowsTransparency="True" Background="Transparent" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -137,14 +137,15 @@
         </ControlTemplate>
     </Window.Resources>
 
-    <Window.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FF232D3E" Offset="0"/>
-            <GradientStop Color="#FF1D222C" Offset="1"/>
-            <GradientStop Color="#FF1D222C" Offset="0.50"/>
-        </LinearGradientBrush>
-    </Window.Background>
-    <Grid>
+    <Border CornerRadius="10">
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF232D3E" Offset="0"/>
+                <GradientStop Color="#FF1D222C" Offset="1"/>
+                <GradientStop Color="#FF1D222C" Offset="0.50"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="110"/>
@@ -353,7 +354,8 @@
             Логин или Пароль не верный
         </TextBlock>
         <TextBlock Grid.Row="2" FontSize="9" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="#5c5c5c" Margin="0 0 5 20"> 
-            Version 1.0.13
+            Version 1.1.13
         </TextBlock>
     </Grid>
+    </Border>
 </Window>

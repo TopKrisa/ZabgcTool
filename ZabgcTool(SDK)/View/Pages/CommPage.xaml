@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ZabgcTool_SDK_.View.Pages"
+         xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CommPage">
@@ -72,10 +73,11 @@
             <RowDefinition/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
-        <ListView Grid.Row="0" Name="CommentsList" ItemsSource="{Binding}" Background="Transparent"  BorderThickness="0" ItemContainerStyle="{StaticResource LvItemStyle}" >
+        <Image Name="LoadAnim" Grid.Row="0" Visibility="Visible"  Width="250" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center"  gif:AnimationBehavior.SourceUri="Load.gif"/>
+        <ListView Grid.Row="0" Name="CommentsList" ItemsSource="{Binding}" Background="Transparent"  ScrollViewer.CanContentScroll="False" BorderThickness="0" ItemContainerStyle="{StaticResource LvItemStyle}" >
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="20 4 20 0">
+                    <StackPanel Margin="10 4 10 0">
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Style.Triggers 
@@ -98,7 +100,7 @@
                                                 <Storyboard>
                                                     <ThicknessAnimation Duration="0:0:0.10" 
                                                             Storyboard.TargetProperty="Margin"
-                                                            To="20 4 20 0"/>
+                                                            To="10 4 10 0"/>
 
                                                 </Storyboard>
                                             </BeginStoryboard>
@@ -107,7 +109,8 @@
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <Border  BorderThickness="1" BorderBrush="#FF303031" Height="40" >
+                        <Border  BorderThickness="1" CornerRadius="4" BorderBrush="#FF303031" Height="40" >
+             
                             <Border.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -141,7 +144,7 @@
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <Border  Height="10" Width="10" CornerRadius="2" BorderThickness="1" Background="Black" HorizontalAlignment="Left">
+                                                    <Border  Height="13" Width="13" CornerRadius="2" BorderThickness="1" Background="Black" HorizontalAlignment="Left">
                                                         <Border.Style>
                                                             <Style TargetType="{x:Type Border}">
                                                                 <Setter Property="BorderBrush" Value="#FF333842"/>
@@ -167,7 +170,7 @@
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Border.Style>
-                                                        <Image Width="9" Height="9">
+                                                        <Image Width="11" Height="11">
                                                             <Image.Style>
                                                                 <Style>
                                                                     <Style.Triggers>
@@ -186,7 +189,7 @@
                                         </ToggleButton.Template>
                                     </ToggleButton>
                                     <Button Content="Удалить" Template="{StaticResource ResourceKey=TopMenuButtons}" Name="DeleteComment" Click="DeleteComment_Click"/>
-                                    <Button Content="Редактировать" Template="{StaticResource ResourceKey=TopMenuButtons}" Name="PublishComment" Click="PublishComment_Click"/>
+                                    <Button Content="Активировать" Template="{StaticResource ResourceKey=TopMenuButtons}" Name="PublishComment" Click="PublishComment_Click"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -194,7 +197,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Border Background="#0F1116" Grid.Row="1" BorderThickness="0 1 0 1" BorderBrush="#FF303031" Padding="0" >
+        <Border Background="#0F1116" Grid.Row="1" BorderThickness="0 1 0 1" CornerRadius="0 0 10 10" BorderBrush="#FF303031" Padding="0" >
             <Button Content="Удалить выбранные" Template="{StaticResource ResourceKey=TopMenuButtons}"  Visibility="Collapsed" Width="200" HorizontalAlignment="Left" Name="DeleteCoupleQuestions" Click="DeleteCoupleQuestions_Click"/>
         </Border>
     </Grid>
